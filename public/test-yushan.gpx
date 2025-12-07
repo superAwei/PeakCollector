@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="PeakCollector Test" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>玉山測試軌跡</name>
+    <desc>用於測試 PeakCollector 的示例 GPX 檔案</desc>
+  </metadata>
+  <trk>
+    <name>玉山主峰</name>
+    <trkseg>
+      <!-- 登山口附近 -->
+      <trkpt lat="23.4650" lon="120.9520">
+        <ele>2600</ele>
+        <time>2024-01-01T06:00:00Z</time>
+      </trkpt>
+
+      <!-- 中途點 -->
+      <trkpt lat="23.4680" lon="120.9540">
+        <ele>2800</ele>
+        <time>2024-01-01T07:00:00Z</time>
+      </trkpt>
+
+      <!-- 接近山頂 -->
+      <trkpt lat="23.4695" lon="120.9565">
+        <ele>3800</ele>
+        <time>2024-01-01T08:30:00Z</time>
+      </trkpt>
+
+      <!-- 玉山主峰頂（23.47, 120.957） -->
+      <trkpt lat="23.4701" lon="120.9571">
+        <ele>3952</ele>
+        <time>2024-01-01T09:00:00Z</time>
+      </trkpt>
+
+      <!-- 山頂停留 -->
+      <trkpt lat="23.4700" lon="120.9570">
+        <ele>3950</ele>
+        <time>2024-01-01T09:15:00Z</time>
+      </trkpt>
+
+      <!-- 下山 -->
+      <trkpt lat="23.4690" lon="120.9560">
+        <ele>3700</ele>
+        <time>2024-01-01T10:00:00Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

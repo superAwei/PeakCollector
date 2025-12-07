@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="PeakCollector Test" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>多座百岳測試軌跡</name>
+    <desc>包含玉山、玉山東峰、玉山北峰的測試檔案</desc>
+  </metadata>
+  <trk>
+    <name>玉山群峰</name>
+    <trkseg>
+      <!-- 玉山主峰 (23.47, 120.957) -->
+      <trkpt lat="23.4701" lon="120.9571">
+        <ele>3952</ele>
+        <time>2024-01-01T09:00:00Z</time>
+      </trkpt>
+
+      <!-- 前往玉山東峰 -->
+      <trkpt lat="23.4720" lon="120.9610">
+        <ele>3850</ele>
+        <time>2024-01-01T10:00:00Z</time>
+      </trkpt>
+
+      <!-- 玉山東峰 (23.4742, 120.9628) -->
+      <trkpt lat="23.4743" lon="120.9629">
+        <ele>3869</ele>
+        <time>2024-01-01T11:00:00Z</time>
+      </trkpt>
+
+      <!-- 前往玉山北峰 -->
+      <trkpt lat="23.4800" lon="120.9580">
+        <ele>3800</ele>
+        <time>2024-01-01T12:00:00Z</time>
+      </trkpt>
+
+      <!-- 玉山北峰 (23.4836, 120.9553) -->
+      <trkpt lat="23.4837" lon="120.9554">
+        <ele>3858</ele>
+        <time>2024-01-01T13:00:00Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
