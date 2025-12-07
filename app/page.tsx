@@ -113,7 +113,7 @@ export default function Home() {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">百岳徽章牆</h2>
                 <div className="text-sm text-gray-600">
-                  Demo 版本：前 {DEMO_PEAKS_COUNT} 座
+                  完整版本：{DEMO_PEAKS_COUNT} 座百岳
                 </div>
               </div>
 
@@ -135,7 +135,7 @@ export default function Home() {
         <div className="mt-8 text-center text-sm text-gray-500">
           <p>PeakCollector - 記錄你的百岳征途</p>
           <p className="mt-1">
-            目前為 Demo 版本，僅包含前 20 座百岳資料
+            完整版本：收錄台灣全部 100 座百岳資料
           </p>
         </div>
       </main>
