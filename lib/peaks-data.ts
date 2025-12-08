@@ -6,104 +6,117 @@ export interface Peak {
   longitude: number; // 經度
   range?: string; // 所屬山脈
   description?: string;
+  coordinateSource?: 'official' | 'peakvisor' | 'reference' | 'estimated'; // 座標資料來源
 }
 
 // 台灣百岳完整列表（依海拔高度排名 1-100）
 // 座標資料來源：內政部國土測繪中心、台灣百岳俱樂部
 export const PEAKS: Peak[] = [
   // 前10名 (3700m+)
+  // 座標來源：PeakVisor 官方資料庫（2024）
   {
     id: 1,
     name: '玉山',
     altitude: 3952,
-    latitude: 23.47,
-    longitude: 120.957,
+    latitude: 23.47, // 23°28′12″N
+    longitude: 120.9572, // 120°57′26″E
     range: '玉山山脈',
-    description: '台灣第一高峰，又稱新高山'
+    description: '台灣第一高峰，又稱新高山',
+    coordinateSource: 'peakvisor'
   },
   {
     id: 2,
     name: '雪山',
     altitude: 3886,
-    latitude: 24.3895,
-    longitude: 121.2342,
+    latitude: 24.3832, // 24°23′0″N (修正)
+    longitude: 121.2317, // 121°13′54″E (修正)
     range: '雪山山脈',
-    description: '台灣第二高峰'
+    description: '台灣第二高峰',
+    coordinateSource: 'peakvisor'
   },
   {
     id: 3,
     name: '玉山東峰',
     altitude: 3869,
-    latitude: 23.4742,
-    longitude: 120.9628,
+    latitude: 23.4706, // 23°28′14″N (修正)
+    longitude: 120.965, // 120°57′54″E (修正)
     range: '玉山山脈',
-    description: '玉山群峰之一'
+    description: '玉山群峰之一，十峻之首',
+    coordinateSource: 'peakvisor'
   },
   {
     id: 4,
-    name: '玉山北峰',
-    altitude: 3858,
-    latitude: 23.4836,
-    longitude: 120.9553,
-    range: '玉山山脈',
-    description: '玉山群峰之一'
+    name: '秀姑巒山',
+    altitude: 3860, // 修正海拔：3825→3860
+    latitude: 23.4967, // 23°29′48″N (修正)
+    longitude: 121.0572, // 121°3′26″E (修正)
+    range: '中央山脈',
+    description: '中央山脈最高峰，五岳之東嶽',
+    coordinateSource: 'peakvisor'
   },
   {
     id: 5,
-    name: '玉山南峰',
-    altitude: 3844,
-    latitude: 23.4589,
-    longitude: 120.9547,
+    name: '玉山北峰',
+    altitude: 3858,
+    latitude: 23.4872, // 23°29′14″N (修正)
+    longitude: 120.9594, // 120°57′34″E (修正)
     range: '玉山山脈',
-    description: '玉山群峰之一'
+    description: '玉山群峰之一',
+    coordinateSource: 'peakvisor'
   },
   {
     id: 6,
-    name: '秀姑巒山',
-    altitude: 3825,
-    latitude: 23.4561,
-    longitude: 121.0192,
-    range: '中央山脈',
-    description: '中央山脈最高峰'
+    name: '玉山南峰',
+    altitude: 3844,
+    latitude: 23.4464, // 23°26′47″N (修正)
+    longitude: 120.9586, // 120°57′31″E (修正)
+    range: '玉山山脈',
+    description: '玉山群峰之一',
+    coordinateSource: 'peakvisor'
   },
   {
     id: 7,
     name: '馬博拉斯山',
-    altitude: 3765,
-    latitude: 23.5153,
-    longitude: 121.0411,
+    altitude: 3805, // 修正海拔：3765→3805
+    latitude: 23.5203, // 23°31′13″N (修正)
+    longitude: 121.0669, // 121°4′1″E (修正)
     range: '中央山脈',
-    description: '中央山脈北段最高峰'
+    description: '中央山脈南段最高峰',
+    coordinateSource: 'peakvisor'
   },
   {
     id: 8,
     name: '南湖大山',
     altitude: 3742,
-    latitude: 24.3647,
-    longitude: 121.4322,
+    latitude: 24.3617, // 24°21′42″N (修正)
+    longitude: 121.4392, // 121°26′21″E (修正)
     range: '中央山脈',
-    description: '中央山脈北段名峰'
+    description: '中央山脈北段名峰，五岳之北嶽',
+    coordinateSource: 'peakvisor'
   },
   {
     id: 9,
     name: '東小南山',
     altitude: 3711,
-    latitude: 23.4653,
-    longitude: 121.0175,
+    latitude: 23.4389, // 23°26′20″N (修正)
+    longitude: 120.9633, // 120°57′48″E (修正)
     range: '中央山脈',
-    description: '秀姑巒山附近'
+    description: '秀姑巒山附近',
+    coordinateSource: 'peakvisor'
   },
   {
     id: 10,
     name: '中央尖山',
     altitude: 3705,
-    latitude: 24.3883,
-    longitude: 121.4225,
+    latitude: 24.31, // 24°18′36″N (修正)
+    longitude: 121.4161, // 121°24′58″E (修正)
     range: '中央山脈',
-    description: '有「寶島第一尖」之稱'
+    description: '有「寶島第一尖」之稱，台灣最難爬的百岳之一',
+    coordinateSource: 'peakvisor'
   },
 
   // 11-20名
+  // 座標來源：參考資料（未經官方驗證）
   {
     id: 11,
     name: '雪山北峰',
@@ -111,7 +124,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4017,
     longitude: 121.2264,
     range: '雪山山脈',
-    description: '雪山山脈高峰'
+    description: '雪山山脈高峰',
+    coordinateSource: 'reference'
   },
   {
     id: 12,
@@ -120,7 +134,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.2333,
     longitude: 120.9547,
     range: '中央山脈',
-    description: '南台灣名峰'
+    description: '南台灣名峰',
+    coordinateSource: 'reference'
   },
   {
     id: 13,
@@ -129,7 +144,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.4203,
     longitude: 121.0728,
     range: '中央山脈',
-    description: '中央山脈南二段'
+    description: '中央山脈南二段',
+    coordinateSource: 'reference'
   },
   {
     id: 14,
@@ -138,7 +154,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3669,
     longitude: 121.4483,
     range: '中央山脈',
-    description: '南湖群峰之一'
+    description: '南湖群峰之一',
+    coordinateSource: 'reference'
   },
   {
     id: 15,
@@ -147,7 +164,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.5361,
     longitude: 121.0242,
     range: '中央山脈',
-    description: '郡大山列'
+    description: '郡大山列',
+    coordinateSource: 'reference'
   },
   {
     id: 16,
@@ -156,7 +174,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1342,
     longitude: 121.3364,
     range: '中央山脈',
-    description: '奇萊連峰最高峰'
+    description: '奇萊連峰最高峰',
+    coordinateSource: 'reference'
   },
   {
     id: 17,
@@ -165,7 +184,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.2875,
     longitude: 121.0619,
     range: '中央山脈',
-    description: '南二段名峰'
+    description: '南二段名峰',
+    coordinateSource: 'reference'
   },
   {
     id: 18,
@@ -174,7 +194,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3569,
     longitude: 121.2825,
     range: '雪山山脈',
-    description: '雪山山脈高峰'
+    description: '雪山山脈高峰',
+    coordinateSource: 'reference'
   },
   {
     id: 19,
@@ -183,7 +204,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.5067,
     longitude: 121.0414,
     range: '中央山脈',
-    description: '馬博橫斷'
+    description: '馬博橫斷',
+    coordinateSource: 'reference'
   },
   {
     id: 20,
@@ -192,10 +214,13 @@ export const PEAKS: Peak[] = [
     latitude: 24.3869,
     longitude: 121.4361,
     range: '中央山脈',
-    description: '南湖群峰之一'
+    description: '南湖群峰之一',
+    coordinateSource: 'reference'
   },
 
-  // 21-30名
+  // 21-100名
+  // 座標來源：估計值（未經官方驗證，僅供參考）
+  // 建議使用者上傳真實 GPX 軌跡進行驗證
   {
     id: 21,
     name: '奇萊主山',
@@ -203,7 +228,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1256,
     longitude: 121.3278,
     range: '中央山脈',
-    description: '奇萊連峰主峰'
+    description: '奇萊連峰主峰',
+    coordinateSource: 'estimated'
   },
   {
     id: 22,
@@ -212,7 +238,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3586,
     longitude: 121.4369,
     range: '中央山脈',
-    description: '南湖群峰之一'
+    description: '南湖群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 23,
@@ -221,7 +248,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4297,
     longitude: 121.2719,
     range: '雪山山脈',
-    description: '武陵四秀之一'
+    description: '武陵四秀之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 24,
@@ -230,7 +258,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4653,
     longitude: 121.2336,
     range: '雪山山脈',
-    description: '世紀奇峰'
+    description: '世紀奇峰',
+    coordinateSource: 'estimated'
   },
   {
     id: 25,
@@ -239,7 +268,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4464,
     longitude: 121.2533,
     range: '雪山山脈',
-    description: '大霸群峰之一'
+    description: '大霸群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 26,
@@ -248,7 +278,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.9469,
     longitude: 121.1681,
     range: '中央山脈',
-    description: '八通關古道'
+    description: '八通關古道',
+    coordinateSource: 'estimated'
   },
   {
     id: 27,
@@ -257,7 +288,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.0494,
     longitude: 121.2686,
     range: '中央山脈',
-    description: '能高安東軍'
+    description: '能高安東軍',
+    coordinateSource: 'estimated'
   },
   {
     id: 28,
@@ -266,7 +298,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.4469,
     longitude: 121.0681,
     range: '中央山脈',
-    description: '南二段'
+    description: '南二段',
+    coordinateSource: 'estimated'
   },
   {
     id: 29,
@@ -275,7 +308,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.4597,
     longitude: 120.9283,
     range: '玉山山脈',
-    description: '玉山西峰附近'
+    description: '玉山西峰附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 30,
@@ -284,7 +318,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1322,
     longitude: 121.3336,
     range: '中央山脈',
-    description: '奇萊連峰'
+    description: '奇萊連峰',
+    coordinateSource: 'estimated'
   },
 
   // 31-40名
@@ -295,7 +330,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.4903,
     longitude: 121.0386,
     range: '中央山脈',
-    description: '馬博橫斷'
+    description: '馬博橫斷',
+    coordinateSource: 'estimated'
   },
   {
     id: 32,
@@ -304,7 +340,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.6203,
     longitude: 120.9728,
     range: '中央山脈',
-    description: '郡大山列'
+    description: '郡大山列',
+    coordinateSource: 'estimated'
   },
   {
     id: 33,
@@ -313,7 +350,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.3944,
     longitude: 121.0214,
     range: '中央山脈',
-    description: '南二段'
+    description: '南二段',
+    coordinateSource: 'estimated'
   },
   {
     id: 34,
@@ -322,7 +360,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4108,
     longitude: 121.4092,
     range: '中央山脈',
-    description: '南湖群峰附近'
+    description: '南湖群峰附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 35,
@@ -331,7 +370,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.3703,
     longitude: 120.9511,
     range: '中央山脈',
-    description: '關山大斷崖附近'
+    description: '關山大斷崖附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 36,
@@ -340,7 +380,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4406,
     longitude: 121.2894,
     range: '雪山山脈',
-    description: '武陵四秀之一'
+    description: '武陵四秀之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 37,
@@ -349,7 +390,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4167,
     longitude: 121.2722,
     range: '雪山山脈',
-    description: '武陵四秀之一'
+    description: '武陵四秀之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 38,
@@ -358,7 +400,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4544,
     longitude: 121.2425,
     range: '雪山山脈',
-    description: '大霸群峰之一'
+    description: '大霸群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 39,
@@ -367,7 +410,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.5203,
     longitude: 121.0619,
     range: '中央山脈',
-    description: '郡大山列'
+    description: '郡大山列',
+    coordinateSource: 'estimated'
   },
   {
     id: 40,
@@ -376,7 +420,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.4842,
     longitude: 121.0258,
     range: '中央山脈',
-    description: '馬博橫斷'
+    description: '馬博橫斷',
+    coordinateSource: 'estimated'
   },
 
   // 41-50名
@@ -387,7 +432,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4672,
     longitude: 121.2397,
     range: '雪山山脈',
-    description: '大霸群峰之一'
+    description: '大霸群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 42,
@@ -396,7 +442,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1797,
     longitude: 121.3769,
     range: '中央山脈',
-    description: '奇萊東稜'
+    description: '奇萊東稜',
+    coordinateSource: 'estimated'
   },
   {
     id: 43,
@@ -405,7 +452,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.5847,
     longitude: 120.9881,
     range: '中央山脈',
-    description: '郡大山列'
+    description: '郡大山列',
+    coordinateSource: 'estimated'
   },
   {
     id: 44,
@@ -414,7 +462,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4503,
     longitude: 121.2969,
     range: '雪山山脈',
-    description: '武陵四秀之一'
+    description: '武陵四秀之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 45,
@@ -423,7 +472,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4797,
     longitude: 121.2656,
     range: '雪山山脈',
-    description: '大霸群峰之一'
+    description: '大霸群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 46,
@@ -432,7 +482,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.6569,
     longitude: 121.0978,
     range: '中央山脈',
-    description: '丹大山列'
+    description: '丹大山列',
+    coordinateSource: 'estimated'
   },
   {
     id: 47,
@@ -441,7 +492,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4003,
     longitude: 121.4144,
     range: '中央山脈',
-    description: '南湖群峰附近'
+    description: '南湖群峰附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 48,
@@ -450,7 +502,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.3522,
     longitude: 121.0242,
     range: '中央山脈',
-    description: '南二段'
+    description: '南二段',
+    coordinateSource: 'estimated'
   },
   {
     id: 49,
@@ -459,7 +512,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.4964,
     longitude: 121.0497,
     range: '中央山脈',
-    description: '馬博橫斷'
+    description: '馬博橫斷',
+    coordinateSource: 'estimated'
   },
   {
     id: 50,
@@ -468,7 +522,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4586,
     longitude: 121.2744,
     range: '雪山山脈',
-    description: '大霸群峰之一'
+    description: '大霸群峰之一',
+    coordinateSource: 'estimated'
   },
 
   // 51-60名
@@ -479,7 +534,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1392,
     longitude: 121.2844,
     range: '中央山脈',
-    description: '合歡群峰之一，最容易親近的百岳'
+    description: '合歡群峰之一，最容易親近的百岳',
+    coordinateSource: 'estimated'
   },
   {
     id: 52,
@@ -488,7 +544,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1442,
     longitude: 121.2814,
     range: '中央山脈',
-    description: '合歡群峰之一'
+    description: '合歡群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 53,
@@ -497,7 +554,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.0753,
     longitude: 121.2617,
     range: '中央山脈',
-    description: '又稱能高主山北峰'
+    description: '又稱能高主山北峰',
+    coordinateSource: 'estimated'
   },
   {
     id: 54,
@@ -506,7 +564,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.0833,
     longitude: 121.2917,
     range: '中央山脈',
-    description: '奇萊連峰'
+    description: '奇萊連峰',
+    coordinateSource: 'estimated'
   },
   {
     id: 55,
@@ -515,7 +574,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.0589,
     longitude: 121.2792,
     range: '中央山脈',
-    description: '能高山北側'
+    description: '能高山北側',
+    coordinateSource: 'estimated'
   },
   {
     id: 56,
@@ -524,7 +584,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.0519,
     longitude: 121.2747,
     range: '中央山脈',
-    description: '能高安東軍主峰'
+    description: '能高安東軍主峰',
+    coordinateSource: 'estimated'
   },
   {
     id: 57,
@@ -533,7 +594,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.2069,
     longitude: 121.1928,
     range: '中央山脈',
-    description: '白姑三山之一'
+    description: '白姑三山之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 58,
@@ -542,7 +604,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1494,
     longitude: 121.2761,
     range: '中央山脈',
-    description: '合歡群峰之一'
+    description: '合歡群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 59,
@@ -551,7 +614,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.2589,
     longitude: 121.2269,
     range: '中央山脈',
-    description: '武陵四秀附近'
+    description: '武陵四秀附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 60,
@@ -560,7 +624,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1397,
     longitude: 121.2722,
     range: '中央山脈',
-    description: '合歡主峰'
+    description: '合歡主峰',
+    coordinateSource: 'estimated'
   },
 
   // 61-70名
@@ -571,7 +636,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.6031,
     longitude: 121.0117,
     range: '中央山脈',
-    description: '郡大山列主峰'
+    description: '郡大山列主峰',
+    coordinateSource: 'estimated'
   },
   {
     id: 62,
@@ -580,7 +646,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1608,
     longitude: 121.2728,
     range: '中央山脈',
-    description: '合歡群峰之一'
+    description: '合歡群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 63,
@@ -589,7 +656,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1333,
     longitude: 121.2583,
     range: '中央山脈',
-    description: '合歡群峰之一'
+    description: '合歡群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 64,
@@ -598,7 +666,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.4611,
     longitude: 120.9261,
     range: '玉山山脈',
-    description: '玉山群峰之一'
+    description: '玉山群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 65,
@@ -607,7 +676,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.3781,
     longitude: 120.9764,
     range: '中央山脈',
-    description: '南橫三山之一'
+    description: '南橫三山之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 66,
@@ -616,7 +686,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.3233,
     longitude: 120.9336,
     range: '中央山脈',
-    description: '南橫三山之一'
+    description: '南橫三山之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 67,
@@ -625,7 +696,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.2942,
     longitude: 120.9178,
     range: '中央山脈',
-    description: '南橫三山之一'
+    description: '南橫三山之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 68,
@@ -634,7 +706,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3803,
     longitude: 121.2453,
     range: '雪山山脈',
-    description: '雪山群峰之一'
+    description: '雪山群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 69,
@@ -643,7 +716,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.2153,
     longitude: 121.4017,
     range: '中央山脈',
-    description: '太魯閣國家公園名峰'
+    description: '太魯閣國家公園名峰',
+    coordinateSource: 'estimated'
   },
   {
     id: 70,
@@ -652,7 +726,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.7467,
     longitude: 121.0903,
     range: '中央山脈',
-    description: '干卓萬山列主峰'
+    description: '干卓萬山列主峰',
+    coordinateSource: 'estimated'
   },
 
   // 71-80名
@@ -663,7 +738,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.7086,
     longitude: 121.0828,
     range: '中央山脈',
-    description: '干卓萬山列'
+    description: '干卓萬山列',
+    coordinateSource: 'estimated'
   },
   {
     id: 72,
@@ -672,7 +748,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.2947,
     longitude: 121.2533,
     range: '雪山山脈',
-    description: '武陵四秀附近'
+    description: '武陵四秀附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 73,
@@ -681,7 +758,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3297,
     longitude: 121.2678,
     range: '雪山山脈',
-    description: '大小劍山附近'
+    description: '大小劍山附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 74,
@@ -690,7 +768,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1997,
     longitude: 121.3653,
     range: '中央山脈',
-    description: '奇萊東稜'
+    description: '奇萊東稜',
+    coordinateSource: 'estimated'
   },
   {
     id: 75,
@@ -699,7 +778,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.2244,
     longitude: 121.3772,
     range: '中央山脈',
-    description: '奇萊東稜'
+    description: '奇萊東稜',
+    coordinateSource: 'estimated'
   },
   {
     id: 76,
@@ -708,7 +788,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.0228,
     longitude: 121.2692,
     range: '中央山脈',
-    description: '能高安東軍'
+    description: '能高安東軍',
+    coordinateSource: 'estimated'
   },
   {
     id: 77,
@@ -717,7 +798,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.8856,
     longitude: 121.1833,
     range: '中央山脈',
-    description: '八通關古道'
+    description: '八通關古道',
+    coordinateSource: 'estimated'
   },
   {
     id: 78,
@@ -726,7 +808,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.4392,
     longitude: 120.9497,
     range: '玉山山脈',
-    description: '玉山群峰之一'
+    description: '玉山群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 79,
@@ -735,7 +818,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.6758,
     longitude: 121.0442,
     range: '中央山脈',
-    description: '郡大山列'
+    description: '郡大山列',
+    coordinateSource: 'estimated'
   },
   {
     id: 80,
@@ -744,7 +828,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.1119,
     longitude: 121.3117,
     range: '中央山脈',
-    description: '奇萊連峰'
+    description: '奇萊連峰',
+    coordinateSource: 'estimated'
   },
 
   // 81-90名
@@ -755,7 +840,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.2119,
     longitude: 120.9536,
     range: '中央山脈',
-    description: '關山附近'
+    description: '關山附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 82,
@@ -764,7 +850,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.2669,
     longitude: 121.0106,
     range: '中央山脈',
-    description: '南二段'
+    description: '南二段',
+    coordinateSource: 'estimated'
   },
   {
     id: 83,
@@ -773,7 +860,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3325,
     longitude: 121.2694,
     range: '雪山山脈',
-    description: '大小劍山'
+    description: '大小劍山',
+    coordinateSource: 'estimated'
   },
   {
     id: 84,
@@ -782,7 +870,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.5506,
     longitude: 121.0644,
     range: '中央山脈',
-    description: '郡大山列'
+    description: '郡大山列',
+    coordinateSource: 'estimated'
   },
   {
     id: 85,
@@ -791,7 +880,8 @@ export const PEAKS: Peak[] = [
     latitude: 22.7061,
     longitude: 120.7311,
     range: '中央山脈',
-    description: '南台灣屏障，南部最高峰'
+    description: '南台灣屏障，南部最高峰',
+    coordinateSource: 'estimated'
   },
   {
     id: 86,
@@ -800,7 +890,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.2633,
     longitude: 121.2206,
     range: '中央山脈',
-    description: '白姑三山附近'
+    description: '白姑三山附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 87,
@@ -809,7 +900,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3753,
     longitude: 121.2111,
     range: '雪山山脈',
-    description: '雪山山脈高峰'
+    description: '雪山山脈高峰',
+    coordinateSource: 'estimated'
   },
   {
     id: 88,
@@ -818,7 +910,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3147,
     longitude: 121.2111,
     range: '雪山山脈',
-    description: '雪山山脈'
+    description: '雪山山脈',
+    coordinateSource: 'estimated'
   },
   {
     id: 89,
@@ -827,7 +920,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.2381,
     longitude: 121.2008,
     range: '中央山脈',
-    description: '白姑三山附近'
+    description: '白姑三山附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 90,
@@ -836,7 +930,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.4861,
     longitude: 120.9664,
     range: '玉山山脈',
-    description: '玉山群峰之一'
+    description: '玉山群峰之一',
+    coordinateSource: 'estimated'
   },
 
   // 91-100名
@@ -847,7 +942,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3478,
     longitude: 121.4347,
     range: '中央山脈',
-    description: '南湖群峰之一'
+    description: '南湖群峰之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 92,
@@ -856,7 +952,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.6203,
     longitude: 120.9728,
     range: '中央山脈',
-    description: '郡大山列'
+    description: '郡大山列',
+    coordinateSource: 'estimated'
   },
   {
     id: 93,
@@ -865,7 +962,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3625,
     longitude: 121.2292,
     range: '雪山山脈',
-    description: '雪山山脈'
+    description: '雪山山脈',
+    coordinateSource: 'estimated'
   },
   {
     id: 94,
@@ -874,7 +972,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3569,
     longitude: 121.2825,
     range: '雪山山脈',
-    description: '雪山山脈高峰'
+    description: '雪山山脈高峰',
+    coordinateSource: 'estimated'
   },
   {
     id: 95,
@@ -883,7 +982,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.3703,
     longitude: 120.9511,
     range: '中央山脈',
-    description: '關山附近'
+    description: '關山附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 96,
@@ -892,7 +992,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4503,
     longitude: 121.2969,
     range: '雪山山脈',
-    description: '武陵四秀之一'
+    description: '武陵四秀之一',
+    coordinateSource: 'estimated'
   },
   {
     id: 97,
@@ -901,7 +1002,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.4094,
     longitude: 121.4247,
     range: '中央山脈',
-    description: '南湖群峰附近'
+    description: '南湖群峰附近',
+    coordinateSource: 'estimated'
   },
   {
     id: 98,
@@ -910,7 +1012,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.4678,
     longitude: 121.0081,
     range: '中央山脈',
-    description: '馬博橫斷'
+    description: '馬博橫斷',
+    coordinateSource: 'estimated'
   },
   {
     id: 99,
@@ -919,7 +1022,8 @@ export const PEAKS: Peak[] = [
     latitude: 23.2939,
     longitude: 121.0686,
     range: '中央山脈',
-    description: '南二段'
+    description: '南二段',
+    coordinateSource: 'estimated'
   },
   {
     id: 100,
@@ -928,7 +1032,8 @@ export const PEAKS: Peak[] = [
     latitude: 24.3553,
     longitude: 121.4431,
     range: '中央山脈',
-    description: '南湖群峰之一'
+    description: '南湖群峰之一',
+    coordinateSource: 'estimated'
   }
 ];
 
