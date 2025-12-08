@@ -4,6 +4,7 @@ export interface CompletedPeak {
   peakId: number;
   completedAt: string; // ISO 8601 日期字串
   gpxFileName?: string;
+  verificationMethod?: 'gpx_verified' | 'manual'; // 驗證方式
 }
 
 /**
@@ -38,7 +39,8 @@ export function getCompletedPeakIds(): number[] {
  */
 export function saveCompletedPeaks(
   peakIds: number[],
-  gpxFileName?: string
+  gpxFileName?: string,
+  verificationMethod: 'gpx_verified' | 'manual' = 'gpx_verified'
 ): void {
   if (typeof window === 'undefined') {
     return;
@@ -56,6 +58,7 @@ export function saveCompletedPeaks(
         peakId: id,
         completedAt: now,
         gpxFileName,
+        verificationMethod,
       }));
 
     if (newRecords.length > 0) {
@@ -88,4 +91,29 @@ export function clearCompletedPeaks(): void {
  */
 export function isPeakCompleted(peakId: number): boolean {
   return getCompletedPeakIds().includes(peakId);
+}
+
+/**
+ * 取得特定百岳的完成記錄
+ */
+export function getPeakRecord(peakId: number): CompletedPeak | undefined {
+  return getCompletedPeaks().find((record) => record.peakId === peakId);
+}
+
+/**
+ * 刪除特定百岳的記錄
+ */
+export function deletePeakRecord(peakId: number): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    const existingRecords = getCompletedPeaks();
+    const updatedRecords = existingRecords.filter((r) => r.peakId !== peakId);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedRecords));
+  } catch (error) {
+    console.error('刪除記錄失敗:', error);
+    throw error;
+  }
 }

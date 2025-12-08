@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import ProgressStats from '@/components/ProgressStats';
 import PeakBadge from '@/components/PeakBadge';
 import GPXUploader from '@/components/GPXUploader';
+import UsageGuide from '@/components/UsageGuide';
+import FirstTimeNotice from '@/components/FirstTimeNotice';
 import { PEAKS, DEMO_PEAKS_COUNT } from '@/lib/peaks-data';
 import { getCompletedPeakIds, clearCompletedPeaks } from '@/lib/storage';
 
@@ -43,15 +45,25 @@ export default function Home() {
     }
   };
 
+  // 刷新已完成列表（用於手動標記和刪除記錄後）
+  const handleUpdate = () => {
+    setCompletedPeakIds(getCompletedPeakIds());
+    setNewlyCompletedIds([]); // 清除 NEW 標記
+  };
+
   // 避免水合錯誤
   if (!isClient) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <>
+      {/* 首次載入提示 */}
+      <FirstTimeNotice />
+
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -77,36 +89,25 @@ export default function Home() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* 左側：GPX 上傳區域 (40%) */}
           <div className="w-full lg:w-[40%] flex flex-col gap-6">
-            <GPXUploader onPeaksVerified={handlePeaksVerified} />
+            {/* 使用說明（上方） */}
+            <UsageGuide />
 
-            {/* 使用說明 */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-lg font-bold text-gray-800 mb-3">使用說明</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">1.</span>
-                  <span>上傳你的登山 GPX 軌跡檔案（可從 Strava、健行筆記等 App 匯出）</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">2.</span>
-                  <span>系統會自動檢查軌跡是否經過百岳山頂（100公尺範圍內）</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">3.</span>
-                  <span>驗證成功後，對應的百岳徽章會自動點亮</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">4.</span>
-                  <span>收集進度會儲存在瀏覽器本地，換瀏覽器需重新驗證</span>
-                </li>
-              </ul>
-            </div>
+            {/* GPX 上傳 */}
+            <GPXUploader onPeaksVerified={handlePeaksVerified} />
           </div>
 
           {/* 右側：進度統計 + 百岳徽章牆 (60%) */}
           <div className="w-full lg:w-[60%] flex flex-col gap-6">
             {/* Progress Stats */}
             <ProgressStats completed={completedPeakIds.length} total={DEMO_PEAKS_COUNT} />
+
+            {/* 提示訊息 */}
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+              <p className="text-sm text-blue-900">
+                <span className="font-semibold">💡 提示：</span>
+                GPX 驗證失敗？試試「手動標記」功能！點擊徽章上的「✓ 手動標記」按鈕即可。
+              </p>
+            </div>
 
             {/* Peaks Grid */}
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -124,10 +125,10 @@ export default function Home() {
                     peak={peak}
                     isCompleted={completedPeakIds.includes(peak.id)}
                     isNewlyCompleted={newlyCompletedIds.includes(peak.id)}
+                    onUpdate={handleUpdate}
                   />
                 ))}
-              </div>
-            </div>
+              </div>            </div>
           </div>
         </div>
 
@@ -139,6 +140,7 @@ export default function Home() {
           </p>
         </div>
       </main>
-    </div>
+      </div>
+    </>
   );
 }
