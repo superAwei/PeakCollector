@@ -47,24 +47,32 @@ export default function Home() {
 
   // 處理新驗證的百岳
   const handlePeaksVerified = async (peakIds: number[]) => {
+    // 先取得目前已完成的 ID（從舊 state）
     const currentCompleted = new Set(completedPeakIds);
-    const newPeaks = peakIds.filter((id) => !currentCompleted.has(id));
 
-    if (newPeaks.length > 0) {
-      setNewlyCompletedIds(newPeaks);
+    // 稍微延遲以確保 Supabase 資料已完全寫入
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-      // 重新載入完成記錄
-      try {
-        const ids = await getCompletedPeakIds();
-        setCompletedPeakIds(ids);
-      } catch (error) {
-        console.error('重新載入完成記錄失敗:', error);
+    // 重新載入完成記錄（從 Supabase 取得最新資料）
+    try {
+      const ids = await getCompletedPeakIds();
+      setCompletedPeakIds(ids);
+
+      // 用最新的資料判斷哪些是新完成的
+      const newPeaks = peakIds.filter((id) => !currentCompleted.has(id));
+
+      if (newPeaks.length > 0) {
+        setNewlyCompletedIds(newPeaks);
+
+        console.log(`✨ 新完成 ${newPeaks.length} 座百岳，徽章即時更新！`);
+
+        // 3秒後移除 "NEW" 標記
+        setTimeout(() => {
+          setNewlyCompletedIds([]);
+        }, 3000);
       }
-
-      // 3秒後移除 "NEW" 標記
-      setTimeout(() => {
-        setNewlyCompletedIds([]);
-      }, 3000);
+    } catch (error) {
+      console.error('重新載入完成記錄失敗:', error);
     }
   };
 
