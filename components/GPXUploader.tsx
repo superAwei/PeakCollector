@@ -42,10 +42,10 @@ export default function GPXUploader({ onPeaksVerified }: GPXUploaderProps) {
           text: '此 GPX 檔案沒有經過任何百岳山頂（100公尺範圍內）',
         });
       } else {
-        // 儲存到 localStorage
-        saveCompletedPeaks(visitedPeakIds, file.name);
+        // 儲存到 Supabase（等待完成）
+        await saveCompletedPeaks(visitedPeakIds, file.name);
 
-        // 通知父組件
+        // 通知父組件（等資料儲存完成後再通知）
         onPeaksVerified(visitedPeakIds);
 
         const peakNames = visitedPeakIds

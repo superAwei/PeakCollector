@@ -1,33 +1,65 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import ProgressStats from '@/components/ProgressStats';
 import PeakBadge from '@/components/PeakBadge';
 import GPXUploader from '@/components/GPXUploader';
 import UsageGuide from '@/components/UsageGuide';
 import FirstTimeNotice from '@/components/FirstTimeNotice';
+import UserMenu from '@/components/UserMenu';
+import { useAuth } from '@/components/AuthProvider';
 import { PEAKS, DEMO_PEAKS_COUNT } from '@/lib/peaks-data';
 import { getCompletedPeakIds, clearCompletedPeaks } from '@/lib/storage';
 
 export default function Home() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
   const [completedPeakIds, setCompletedPeakIds] = useState<number[]>([]);
   const [newlyCompletedIds, setNewlyCompletedIds] = useState<number[]>([]);
-  const [isClient, setIsClient] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
+  // 檢查登入狀態
+  useEffect(() => {
+    if (!loading && !user) {
+      // 未登入，重導向到登入頁面
+      router.push('/login');
+    }
+  }, [user, loading, router]);
 
   // 載入已完成的百岳記錄
   useEffect(() => {
-    setIsClient(true);
-    setCompletedPeakIds(getCompletedPeakIds());
-  }, []);
+    async function loadCompletedPeaks() {
+      if (user) {
+        try {
+          const ids = await getCompletedPeakIds();
+          setCompletedPeakIds(ids);
+        } catch (error) {
+          console.error('載入完成記錄失敗:', error);
+        } finally {
+          setIsLoadingData(false);
+        }
+      }
+    }
+
+    loadCompletedPeaks();
+  }, [user]);
 
   // 處理新驗證的百岳
-  const handlePeaksVerified = (peakIds: number[]) => {
+  const handlePeaksVerified = async (peakIds: number[]) => {
     const currentCompleted = new Set(completedPeakIds);
     const newPeaks = peakIds.filter((id) => !currentCompleted.has(id));
 
     if (newPeaks.length > 0) {
       setNewlyCompletedIds(newPeaks);
-      setCompletedPeakIds(getCompletedPeakIds());
+
+      // 重新載入完成記錄
+      try {
+        const ids = await getCompletedPeakIds();
+        setCompletedPeakIds(ids);
+      } catch (error) {
+        console.error('重新載入完成記錄失敗:', error);
+      }
 
       // 3秒後移除 "NEW" 標記
       setTimeout(() => {
@@ -37,22 +69,44 @@ export default function Home() {
   };
 
   // 重置進度
-  const handleReset = () => {
+  const handleReset = async () => {
     if (confirm('確定要清除所有已完成記錄嗎？此操作無法復原。')) {
-      clearCompletedPeaks();
-      setCompletedPeakIds([]);
-      setNewlyCompletedIds([]);
+      try {
+        await clearCompletedPeaks();
+        setCompletedPeakIds([]);
+        setNewlyCompletedIds([]);
+      } catch (error) {
+        console.error('清除記錄失敗:', error);
+        alert('清除失敗，請稍後再試');
+      }
     }
   };
 
   // 刷新已完成列表（用於手動標記和刪除記錄後）
-  const handleUpdate = () => {
-    setCompletedPeakIds(getCompletedPeakIds());
-    setNewlyCompletedIds([]); // 清除 NEW 標記
+  const handleUpdate = async () => {
+    try {
+      const ids = await getCompletedPeakIds();
+      setCompletedPeakIds(ids);
+      setNewlyCompletedIds([]); // 清除 NEW 標記
+    } catch (error) {
+      console.error('重新載入完成記錄失敗:', error);
+    }
   };
 
-  // 避免水合錯誤
-  if (!isClient) {
+  // Loading 狀態
+  if (loading || isLoadingData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⛰️</div>
+          <div className="text-xl text-gray-600">載入中...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // 未登入時不渲染（會被重導向）
+  if (!user) {
     return null;
   }
 
@@ -73,12 +127,17 @@ export default function Home() {
                 <p className="text-sm text-gray-600 mt-1">台灣百岳收集器</p>
               </div>
             </div>
-            <button
-              onClick={handleReset}
-              className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              重置進度
-            </button>
+
+            {/* 右側：使用者選單和重置按鈕 */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleReset}
+                className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                重置進度
+              </button>
+              <UserMenu />
+            </div>
           </div>
         </div>
       </header>

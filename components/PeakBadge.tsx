@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Peak } from '@/lib/peaks-data';
 import { CompletedPeak, saveCompletedPeaks, getPeakRecord, deletePeakRecord } from '@/lib/storage';
 import Modal from './Modal';
@@ -16,23 +16,42 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
   const [showManualConfirm, setShowManualConfirm] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [record, setRecord] = useState<CompletedPeak | undefined>(undefined);
 
-  const record = isCompleted ? getPeakRecord(peak.id) : undefined;
+  // 載入完成記錄
+  useEffect(() => {
+    if (isCompleted) {
+      getPeakRecord(peak.id).then(setRecord);
+    } else {
+      setRecord(undefined);
+    }
+  }, [isCompleted, peak.id]);
+
   const isManual = record?.verificationMethod === 'manual';
 
   // 手動標記
-  const handleManualMark = () => {
-    saveCompletedPeaks([peak.id], undefined, 'manual');
-    setShowManualConfirm(false);
-    onUpdate?.();
+  const handleManualMark = async () => {
+    try {
+      await saveCompletedPeaks([peak.id], undefined, 'manual');
+      setShowManualConfirm(false);
+      onUpdate?.(); // 等資料儲存完成後再更新
+    } catch (error) {
+      console.error('手動標記失敗:', error);
+      alert('標記失敗，請稍後再試');
+    }
   };
 
   // 刪除記錄
-  const handleDelete = () => {
-    deletePeakRecord(peak.id);
-    setShowDeleteConfirm(false);
-    setShowDetails(false);
-    onUpdate?.();
+  const handleDelete = async () => {
+    try {
+      await deletePeakRecord(peak.id);
+      setShowDeleteConfirm(false);
+      setShowDetails(false);
+      onUpdate?.(); // 等資料刪除完成後再更新
+    } catch (error) {
+      console.error('刪除記錄失敗:', error);
+      alert('刪除失敗，請稍後再試');
+    }
   };
 
   // 取得座標精確度資訊
