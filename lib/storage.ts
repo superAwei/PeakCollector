@@ -309,7 +309,7 @@ export async function migrateFromLocalStorage(): Promise<MigrationResult> {
     console.log('📦 [遷移] 步驟 3/5: 查詢 Supabase 現有記錄');
 
     // 取得 Supabase 現有記錄
-    let existingRecords;
+    let existingRecords: CompletedPeak[] = [];
     try {
       existingRecords = await getCompletedPeaks();
       console.log(`✅ [遷移] Supabase 現有 ${existingRecords.length} 筆記錄`);
