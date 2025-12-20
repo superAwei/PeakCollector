@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Test GPX">
+  <trk>
+    <name>玉山主峰測試路線</name>
+    <trkseg>
+      <!-- 塔塔加登山口附近 -->
+      <trkpt lat="23.4685" lon="120.9012">
+        <ele>2600</ele>
+      </trkpt>
+      <!-- 排雲山莊附近 -->
+      <trkpt lat="23.4695" lon="120.9025">
+        <ele>3100</ele>
+      </trkpt>
+      <!-- 接近玉山主峰（應該會被驗證到） -->
+      <trkpt lat="23.4703" lon="120.9571">
+        <ele>3900</ele>
+      </trkpt>
+      <!-- 玉山主峰山頂（100公尺範圍內） -->
+      <trkpt lat="23.4700" lon="120.9570">
+        <ele>3952</ele>
+      </trkpt>
+      <!-- 離開山頂 -->
+      <trkpt lat="23.4698" lon="120.9568">
+        <ele>3900</ele>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
