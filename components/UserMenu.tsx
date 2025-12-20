@@ -8,16 +8,31 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { useAuth } from './AuthProvider';
+import { getCurrentUserProfile } from '@/lib/profile';
 
 export default function UserMenu() {
   const router = useRouter();
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
+
+  // 載入使用者 profile（取得 username）
+  useEffect(() => {
+    async function loadProfile() {
+      if (user) {
+        const profile = await getCurrentUserProfile();
+        if (profile) {
+          setUsername(profile.username);
+        }
+      }
+    }
+    loadProfile();
+  }, [user]);
 
   // 取得使用者顯示名稱
   const displayName = user?.user_metadata?.full_name ||
@@ -106,27 +121,32 @@ export default function UserMenu() {
 
             {/* 選單項目 */}
             <div className="py-1">
-              {/* 個人主頁（未來實作） */}
+              {/* 個人主頁 */}
               <button
                 onClick={() => {
                   setIsOpen(false);
-                  // router.push(`/@${username}`); // 未來實作
-                  alert('個人主頁功能即將推出！');
+                  if (username) {
+                    router.push(`/@${username}`);
+                  } else {
+                    alert('正在載入個人資料...');
+                  }
                 }}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2"
               >
-                📄 個人主頁
+                <span>👤</span>
+                <span>我的主頁</span>
               </button>
 
-              {/* 設定（未來實作） */}
+              {/* 設定個人資料 */}
               <button
                 onClick={() => {
                   setIsOpen(false);
-                  alert('設定功能即將推出！');
+                  router.push('/profile/edit');
                 }}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2"
               >
-                ⚙️ 設定
+                <span>⚙️</span>
+                <span>編輯個人資料</span>
               </button>
             </div>
 
