@@ -34,6 +34,18 @@ export default function UserMenu() {
     loadProfile();
   }, [user]);
 
+  // 每次打開選單時重新載入 username（確保是最新的）
+  const handleMenuToggle = async () => {
+    if (!isOpen && user) {
+      // 打開選單時重新載入 username
+      const profile = await getCurrentUserProfile();
+      if (profile) {
+        setUsername(profile.username);
+      }
+    }
+    setIsOpen(!isOpen);
+  };
+
   // 取得使用者顯示名稱
   const displayName = user?.user_metadata?.full_name ||
                       user?.user_metadata?.name ||
@@ -70,7 +82,7 @@ export default function UserMenu() {
     <div className="relative">
       {/* 使用者按鈕 */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleMenuToggle}
         className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
       >
         {/* 頭像 */}

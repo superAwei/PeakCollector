@@ -22,9 +22,14 @@ interface PageProps {
 export default async function PublicProfilePage({ params }: PageProps) {
   // 取得 username（移除開頭的 @）
   const { username: rawUsername } = await params;
-  const username = rawUsername.startsWith('@')
-    ? rawUsername.slice(1)
-    : rawUsername;
+
+  // 先 decode URL（處理 %40 等編碼）
+  const decodedUsername = decodeURIComponent(rawUsername);
+
+  // 移除開頭的 @ 符號
+  const username = decodedUsername.startsWith('@')
+    ? decodedUsername.slice(1)
+    : decodedUsername;
 
   // 建立 Supabase client（server-side）
   const supabase = await createClient();
