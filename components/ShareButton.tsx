@@ -312,10 +312,13 @@ export default function ShareButton({
       {/* 分享按鈕 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg shadow-lg transition-all duration-200 font-medium"
+        className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg shadow-lg transition-all duration-200 font-medium text-sm sm:text-base min-h-[44px] whitespace-nowrap"
+        aria-label="分享成就"
       >
-        <span className="text-xl">📤</span>
-        <span>分享我的成就</span>
+        <span className="text-lg sm:text-xl">📤</span>
+        <span className="hidden xs:inline sm:hidden">分享</span>
+        <span className="hidden sm:inline">分享我的成就</span>
+        <span className="xs:hidden">📤</span>
       </button>
 
       {/* 下拉選單 */}

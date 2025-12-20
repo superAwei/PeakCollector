@@ -83,29 +83,30 @@ export default function UserMenu() {
       {/* 使用者按鈕 */}
       <button
         onClick={handleMenuToggle}
-        className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-1.5 sm:gap-3 px-2 sm:px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors min-h-[44px]"
+        aria-label="使用者選單"
       >
         {/* 頭像 */}
         {avatarUrl ? (
           <img
             src={avatarUrl}
             alt={displayName}
-            className="w-8 h-8 rounded-full"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex-shrink-0"
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-semibold">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
             {displayName.charAt(0).toUpperCase()}
           </div>
         )}
 
-        {/* 使用者名稱 */}
-        <span className="text-sm font-medium text-gray-700 hidden sm:block">
+        {/* 使用者名稱 - 只在平板以上顯示 */}
+        <span className="text-sm font-medium text-gray-700 hidden md:block max-w-[120px] truncate">
           {displayName}
         </span>
 
         {/* 下拉箭頭 */}
         <svg
-          className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-500 transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -124,11 +125,11 @@ export default function UserMenu() {
           />
 
           {/* 選單內容 */}
-          <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
+          <div className="absolute right-0 mt-2 w-64 sm:w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-20">
             {/* 使用者資訊 */}
             <div className="px-4 py-3 border-b border-gray-100">
-              <p className="text-sm font-medium text-gray-900">{displayName}</p>
-              <p className="text-xs text-gray-500 mt-1">{user.email}</p>
+              <p className="text-sm font-medium text-gray-900 truncate">{displayName}</p>
+              <p className="text-xs text-gray-500 mt-1 truncate">{user.email}</p>
             </div>
 
             {/* 選單項目 */}
@@ -143,9 +144,9 @@ export default function UserMenu() {
                     alert('正在載入個人資料...');
                   }
                 }}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2"
+                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors flex items-center gap-2 min-h-[44px]"
               >
-                <span>👤</span>
+                <span className="text-base">👤</span>
                 <span>我的主頁</span>
               </button>
 
@@ -155,9 +156,9 @@ export default function UserMenu() {
                   setIsOpen(false);
                   router.push('/profile/edit');
                 }}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2"
+                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors flex items-center gap-2 min-h-[44px]"
               >
-                <span>⚙️</span>
+                <span className="text-base">⚙️</span>
                 <span>編輯個人資料</span>
               </button>
             </div>
@@ -169,7 +170,7 @@ export default function UserMenu() {
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 active:bg-red-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
             >
               {isLoggingOut ? '登出中...' : '🚪 登出'}
             </button>

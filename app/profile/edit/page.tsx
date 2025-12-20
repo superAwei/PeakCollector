@@ -133,26 +133,27 @@ export default function ProfileEditPage() {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => router.back()}
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-gray-600 hover:text-gray-900 transition-colors min-h-[44px] px-2 -ml-2 flex items-center"
+              aria-label="返回"
             >
-              ← 返回
+              ← <span className="hidden sm:inline ml-1">返回</span>
             </button>
-            <div className="text-4xl">⛰️</div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">編輯個人資料</h1>
-              <p className="text-sm text-gray-600">設定你的公開主頁資訊</p>
+            <div className="text-3xl sm:text-4xl flex-shrink-0">⛰️</div>
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">編輯個人資料</h1>
+              <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">設定你的公開主頁資訊</p>
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+      <main className="max-w-2xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* 使用者名稱 */}
             <div>
@@ -244,18 +245,18 @@ export default function ProfileEditPage() {
             )}
 
             {/* 按鈕 */}
-            <div className="flex gap-3 justify-end">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="px-6 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="w-full sm:w-auto px-6 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors min-h-[44px] font-medium"
               >
                 取消
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] font-medium"
               >
                 {isSaving ? '儲存中...' : '儲存'}
               </button>
@@ -265,9 +266,10 @@ export default function ProfileEditPage() {
 
         {/* 預覽提示 */}
         {username && (
-          <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
-            <p className="text-sm text-blue-800">
-              💡 儲存後，你可以將 <strong>/@{username}</strong> 分享給朋友，展示你的百岳收集進度！
+          <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+            <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
+              💡 儲存後，你可以將 <strong>/@{username}</strong> 分享給朋友
+              <span className="hidden sm:inline">，展示你的百岳收集進度</span>！
             </p>
           </div>
         )}
