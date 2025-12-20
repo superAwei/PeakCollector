@@ -79,27 +79,60 @@ function LoginContent() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               PeakCollector
             </h1>
-            <p className="text-gray-600">台灣百岳數位護照</p>
+            <p className="text-gray-600 mb-2">台灣百岳數位護照</p>
+            <p className="text-xs text-emerald-600 font-medium">
+              完全免費 • 資料安全 • 隨時取用
+            </p>
           </div>
 
-          {/* 說明文字 */}
-          <div className="mb-8">
-            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200">
-              <p className="text-sm text-gray-700 text-center">
-                <span className="font-semibold">✨ 登入後你的百岳記錄將同步到雲端</span>
+          {/* 為什麼需要登入 */}
+          <div className="mb-6">
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+              <h3 className="text-sm font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                <span>🔐</span>
+                <span>為什麼需要 Google 登入？</span>
+              </h3>
+              <p className="text-xs text-blue-800 leading-relaxed">
+                我們使用 Google 登入來<strong>保護您的資料安全</strong>，確保只有您能查看和管理自己的百岳記錄。登入後，所有記錄都會安全地儲存在雲端，<strong>永不丟失、隨處可用</strong>！
               </p>
-              <ul className="mt-3 space-y-2 text-sm text-gray-600">
-                <li className="flex items-start">
-                  <span className="text-emerald-500 mr-2">✓</span>
-                  <span>跨裝置同步你的登頂記錄</span>
+            </div>
+          </div>
+
+          {/* 功能說明 */}
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-5 border border-emerald-200">
+              <h2 className="text-base font-bold text-gray-800 mb-4 text-center flex items-center justify-center gap-2">
+                <span>✨</span>
+                <span>強大功能，完全免費</span>
+              </h2>
+              <ul className="space-y-3 text-sm text-gray-700">
+                <li className="flex items-start gap-2">
+                  <span className="text-lg flex-shrink-0">🏔️</span>
+                  <div>
+                    <div className="font-semibold text-gray-800">百岳徽章牆</div>
+                    <div className="text-xs text-gray-600">完整 100 座台灣百岳，視覺化追蹤進度</div>
+                  </div>
                 </li>
-                <li className="flex items-start">
-                  <span className="text-emerald-500 mr-2">✓</span>
-                  <span>建立你的個人公開主頁</span>
+                <li className="flex items-start gap-2">
+                  <span className="text-lg flex-shrink-0">📍</span>
+                  <div>
+                    <div className="font-semibold text-gray-800">GPX 自動驗證</div>
+                    <div className="text-xs text-gray-600">上傳登山軌跡，自動識別完成的百岳</div>
+                  </div>
                 </li>
-                <li className="flex items-start">
-                  <span className="text-emerald-500 mr-2">✓</span>
-                  <span>分享你的百岳成就到社群</span>
+                <li className="flex items-start gap-2">
+                  <span className="text-lg flex-shrink-0">☁️</span>
+                  <div>
+                    <div className="font-semibold text-gray-800">雲端同步</div>
+                    <div className="text-xs text-gray-600">資料安全儲存，手機、電腦隨時查看</div>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-lg flex-shrink-0">🎯</span>
+                  <div>
+                    <div className="font-semibold text-gray-800">手動標記</div>
+                    <div className="text-xs text-gray-600">沒有 GPX？也能彈性記錄完成的百岳</div>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -150,21 +183,28 @@ function LoginContent() {
           </button>
 
           {/* 隱私說明 */}
-          <p className="mt-6 text-xs text-gray-500 text-center">
-            登入即表示你同意我們的服務條款與隱私政策
-            <br />
-            我們只會儲存你的百岳記錄，不會取得其他 Google 資料
-          </p>
+          <div className="mt-6 text-xs text-gray-500 text-center space-y-1">
+            <p className="font-medium text-gray-600">
+              🔒 您的資料 100% 安全
+            </p>
+            <p className="leading-relaxed">
+              我們只會儲存您的百岳記錄，不會取得其他 Google 資料。<br />
+              您可以隨時刪除所有記錄，完全掌控自己的資料。
+            </p>
+          </div>
         </div>
 
         {/* 底部資訊 */}
         <div className="mt-8 text-center">
-          <p className="text-sm text-gray-600">
-            還沒使用過 PeakCollector？
-          </p>
-          <p className="text-xs text-gray-500 mt-2">
-            登入後即可開始記錄你的百岳征途 🏔️
-          </p>
+          <div className="bg-white/50 rounded-lg p-4 backdrop-blur-sm">
+            <p className="text-sm font-semibold text-gray-700 mb-2">
+              ⛰️ 開始你的百岳收集之旅
+            </p>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              一鍵登入，立即開始記錄你的登頂成就<br />
+              加入台灣登山社群，分享你的百岳故事
+            </p>
+          </div>
         </div>
       </div>
     </div>
