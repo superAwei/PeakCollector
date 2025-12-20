@@ -165,7 +165,7 @@ export default function ProfileEditPage() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value.toLowerCase())}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 font-medium"
                   placeholder="your_username"
                   required
                 />
@@ -187,7 +187,7 @@ export default function ProfileEditPage() {
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 font-medium"
                 placeholder="你的名字"
               />
               <p className="mt-1 text-xs text-gray-500">
@@ -204,7 +204,7 @@ export default function ProfileEditPage() {
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 font-medium"
                 placeholder="介紹一下自己的登山經歷..."
                 maxLength={200}
               />
