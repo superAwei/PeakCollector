@@ -9,6 +9,7 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { PEAKS } from '@/lib/peaks-data';
 import Link from 'next/link';
+import ShareButton from '@/components/ShareButton';
 
 // 強制動態渲染（因為內容依賴使用者資料）
 export const dynamic = 'force-dynamic';
@@ -141,6 +142,24 @@ export default async function PublicProfilePage({ params }: PageProps) {
                 <span className="text-white text-sm font-bold">{progress}%</span>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* 分享功能區 */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">分享我的成就</h3>
+              <p className="text-sm text-gray-600">
+                將你的百岳收集進度分享給朋友，或匯出精美的成就報告
+              </p>
+            </div>
+            <ShareButton
+              profile={profile}
+              completedCount={completedCount}
+              totalCount={totalCount}
+              progress={progress}
+            />
           </div>
         </div>
 
