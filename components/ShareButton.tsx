@@ -319,25 +319,8 @@ export default function ShareButton({
   };
 
   // 處理分享按鈕點擊
-  const handleShareClick = async () => {
-    // 手機裝置優先使用原生分享
-    if (isMobile && navigator.share) {
-      try {
-        await navigator.share({
-          title: `${profile.display_name || profile.username} 的百岳收集`,
-          text: `我在 PeakCollector 已經完成了 ${completedCount} 座台灣百岳！進度 ${progress}%`,
-          url: profileUrl,
-        });
-      } catch (error) {
-        // 使用者取消分享或不支援，顯示自定義選單
-        if ((error as Error).name !== 'AbortError') {
-          setIsOpen(true);
-        }
-      }
-    } else {
-      // 桌面版或不支援原生分享，顯示自定義選單
-      setIsOpen(!isOpen);
-    }
+  const handleShareClick = () => {
+    setIsOpen(!isOpen);
   };
 
   return (
@@ -354,32 +337,48 @@ export default function ShareButton({
         <span className="xs:hidden">📤</span>
       </button>
 
-      {/* 下拉選單 */}
+      {/* 分享選單 */}
       {isOpen && (
         <>
           {/* 背景遮罩 */}
           <div
-            className="fixed inset-0 z-10"
+            className="fixed inset-0 bg-black/50 z-40 transition-opacity"
             onClick={() => setIsOpen(false)}
           />
 
-          {/* 選單內容 */}
-          <div className="absolute right-0 mt-2 w-64 sm:w-72 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-20 max-w-[calc(100vw-2rem)]">
-            <div className="px-4 py-2 border-b border-gray-100">
-              <p className="text-sm font-medium text-gray-700">選擇分享方式</p>
+          {/* 選單內容 - 手機版從底部彈出，桌面版下拉 */}
+          <div className={`
+            fixed bottom-0 left-0 right-0
+            md:absolute md:right-0 md:left-auto md:bottom-auto md:top-full md:mt-2
+            bg-white
+            rounded-t-2xl md:rounded-lg
+            shadow-xl border-t md:border
+            border-gray-200
+            z-50
+            w-full md:w-72
+            max-h-[80vh] overflow-y-auto
+            animate-slide-up md:animate-none
+          `}>
+            {/* 手機版拖拽指示器 */}
+            <div className="md:hidden flex justify-center pt-3 pb-2">
+              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
             </div>
 
-            <div className="py-1">
+            <div className="px-4 py-3 border-b border-gray-100">
+              <p className="text-base md:text-sm font-semibold md:font-medium text-gray-800 md:text-gray-700 text-center md:text-left">選擇分享方式</p>
+            </div>
+
+            <div className="py-2">
               {/* 成就海報 */}
               <button
                 onClick={handleExportPoster}
                 disabled={isGenerating}
-                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+                className="w-full text-left px-5 md:px-4 py-4 md:py-3 text-base md:text-sm text-gray-700 hover:bg-emerald-50 active:bg-emerald-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-4 md:gap-3 min-h-[60px] md:min-h-0"
               >
-                <span className="text-xl">🖼️</span>
-                <div>
-                  <div className="font-medium">匯出成就海報</div>
-                  <div className="text-xs text-gray-500">精美圖片格式</div>
+                <span className="text-2xl md:text-xl">🖼️</span>
+                <div className="flex-1">
+                  <div className="font-semibold md:font-medium text-gray-900 md:text-gray-700">匯出成就海報</div>
+                  <div className="text-sm md:text-xs text-gray-500 mt-0.5">精美圖片格式</div>
                 </div>
               </button>
 
@@ -387,12 +386,12 @@ export default function ShareButton({
               <button
                 onClick={handleExportQRCard}
                 disabled={isGenerating}
-                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+                className="w-full text-left px-5 md:px-4 py-4 md:py-3 text-base md:text-sm text-gray-700 hover:bg-emerald-50 active:bg-emerald-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-4 md:gap-3 min-h-[60px] md:min-h-0"
               >
-                <span className="text-xl">📇</span>
-                <div>
-                  <div className="font-medium">QR Code 名片</div>
-                  <div className="text-xs text-gray-500">附 QR Code 的個人名片</div>
+                <span className="text-2xl md:text-xl">📇</span>
+                <div className="flex-1">
+                  <div className="font-semibold md:font-medium text-gray-900 md:text-gray-700">QR Code 名片</div>
+                  <div className="text-sm md:text-xs text-gray-500 mt-0.5">附 QR Code 的個人名片</div>
                 </div>
               </button>
 
@@ -400,12 +399,12 @@ export default function ShareButton({
               <button
                 onClick={handleExportPDF}
                 disabled={isGenerating}
-                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+                className="w-full text-left px-5 md:px-4 py-4 md:py-3 text-base md:text-sm text-gray-700 hover:bg-emerald-50 active:bg-emerald-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-4 md:gap-3 min-h-[60px] md:min-h-0"
               >
-                <span className="text-xl">📄</span>
-                <div>
-                  <div className="font-medium">匯出 PDF 報告</div>
-                  <div className="text-xs text-gray-500">完整的成就報告</div>
+                <span className="text-2xl md:text-xl">📄</span>
+                <div className="flex-1">
+                  <div className="font-semibold md:font-medium text-gray-900 md:text-gray-700">匯出 PDF 報告</div>
+                  <div className="text-sm md:text-xs text-gray-500 mt-0.5">完整的成就報告</div>
                 </div>
               </button>
 
@@ -413,24 +412,34 @@ export default function ShareButton({
               <button
                 onClick={handleShareToSocial}
                 disabled={isGenerating}
-                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+                className="w-full text-left px-5 md:px-4 py-4 md:py-3 text-base md:text-sm text-gray-700 hover:bg-emerald-50 active:bg-emerald-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-4 md:gap-3 min-h-[60px] md:min-h-0"
               >
-                <span className="text-xl">🔗</span>
-                <div>
-                  <div className="font-medium">分享到社群媒體</div>
-                  <div className="text-xs text-gray-500">快速分享連結</div>
+                <span className="text-2xl md:text-xl">🔗</span>
+                <div className="flex-1">
+                  <div className="font-semibold md:font-medium text-gray-900 md:text-gray-700">分享到社群媒體</div>
+                  <div className="text-sm md:text-xs text-gray-500 mt-0.5">快速分享連結</div>
                 </div>
               </button>
             </div>
 
             {isGenerating && (
-              <div className="px-4 py-2 border-t border-gray-100">
-                <p className="text-xs text-emerald-600 flex items-center gap-2">
+              <div className="px-5 md:px-4 py-3 md:py-2 border-t border-gray-100">
+                <p className="text-sm md:text-xs text-emerald-600 flex items-center gap-2 justify-center md:justify-start">
                   <span className="animate-spin">⏳</span>
                   生成中...
                 </p>
               </div>
             )}
+
+            {/* 手機版取消按鈕 */}
+            <div className="md:hidden border-t border-gray-100">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="w-full py-4 text-base font-semibold text-gray-600 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+              >
+                取消
+              </button>
+            </div>
           </div>
         </>
       )}
