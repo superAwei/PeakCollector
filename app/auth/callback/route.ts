@@ -23,12 +23,48 @@ export async function GET(request: NextRequest) {
       const supabase = await createClient();
 
       // 使用 code 交換 session
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
       if (error) {
         console.error('OAuth code exchange 失敗:', error);
         // 重導向到登入頁面並顯示錯誤
         return NextResponse.redirect(`${origin}/login?error=auth_failed`);
+      }
+
+      // 檢查是否為首次登入（profile 不存在）
+      if (data.user) {
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', data.user.id)
+          .single();
+
+        // 如果 profile 不存在，自動建立一個
+        if (!existingProfile) {
+          console.log('🆕 首次登入，建立 profile...');
+
+          // 從 Google 資料取得預設值
+          const fullName = data.user.user_metadata?.full_name ||
+                          data.user.user_metadata?.name ||
+                          data.user.email?.split('@')[0] ||
+                          'user';
+
+          // 生成一個臨時 username（使用者稍後可以修改）
+          const tempUsername = `user_${data.user.id.slice(0, 8)}`;
+
+          await supabase.from('profiles').insert({
+            id: data.user.id,
+            username: tempUsername,
+            display_name: fullName,
+            avatar_url: data.user.user_metadata?.avatar_url,
+            is_public: true, // 預設公開
+            bio: null,
+          });
+
+          console.log('✅ Profile 建立成功，引導使用者設定個人資料');
+          // 重導向到個人資料編輯頁面（首次登入）
+          return NextResponse.redirect(`${origin}/profile/edit?first_time=true`);
+        }
       }
 
       // 成功！重導向到首頁

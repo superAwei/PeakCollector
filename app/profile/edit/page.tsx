@@ -10,26 +10,39 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import { getCurrentUserProfile, updateProfile, isUsernameAvailable } from '@/lib/profile';
 import type { Profile } from '@/lib/types';
 
-export default function ProfileEditPage() {
+// 強制動態渲染
+export const dynamic = 'force-dynamic';
+
+function ProfileEditContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [isFirstTime, setIsFirstTime] = useState(false);
 
   // 表單狀態
   const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
   const [isPublic, setIsPublic] = useState(true);
+
+  // 檢查是否為首次設定
+  useEffect(() => {
+    const firstTimeParam = searchParams.get('first_time');
+    if (firstTimeParam === 'true') {
+      setIsFirstTime(true);
+    }
+  }, [searchParams]);
 
   // 載入 profile
   useEffect(() => {
@@ -153,6 +166,40 @@ export default function ProfileEditPage() {
 
       {/* Main Content */}
       <main className="max-w-2xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
+        {/* 首次設定歡迎訊息 */}
+        {isFirstTime && (
+          <div className="mb-6 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-lg p-4 sm:p-6 animate-slide-up">
+            <div className="flex items-start gap-3">
+              <span className="text-3xl sm:text-4xl flex-shrink-0">👋</span>
+              <div className="flex-1">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                  歡迎來到 PeakCollector！
+                </h2>
+                <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-3">
+                  讓我們先設定你的個人資料，這樣你就可以：
+                </p>
+                <ul className="space-y-2 text-sm sm:text-base text-gray-700">
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>擁有專屬的公開主頁網址（例如：/@your_username）</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>分享你的百岳收集進度給朋友</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>生成精美的 IG Stories 圖片和 QR Code</span>
+                  </li>
+                </ul>
+                <p className="mt-3 text-xs sm:text-sm text-emerald-700 font-medium">
+                  💡 系統已自動生成一個臨時使用者名稱，你可以修改成喜歡的名稱！
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* 使用者名稱 */}
@@ -275,5 +322,21 @@ export default function ProfileEditPage() {
         )}
       </main>
     </div>
+  );
+}
+
+// 包裝 Suspense（避免 useSearchParams 錯誤）
+export default function ProfileEditPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⛰️</div>
+          <div className="text-xl text-gray-600">載入中...</div>
+        </div>
+      </div>
+    }>
+      <ProfileEditContent />
+    </Suspense>
   );
 }

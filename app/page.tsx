@@ -11,6 +11,7 @@ import UserMenu from '@/components/UserMenu';
 import { useAuth } from '@/components/AuthProvider';
 import { PEAKS, DEMO_PEAKS_COUNT } from '@/lib/peaks-data';
 import { getCompletedPeakIds, clearCompletedPeaks } from '@/lib/storage';
+import { getCurrentUserProfile } from '@/lib/profile';
 
 export default function Home() {
   const router = useRouter();
@@ -18,6 +19,8 @@ export default function Home() {
   const [completedPeakIds, setCompletedPeakIds] = useState<number[]>([]);
   const [newlyCompletedIds, setNewlyCompletedIds] = useState<number[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [hasTempUsername, setHasTempUsername] = useState(false);
+  const [showProfileBanner, setShowProfileBanner] = useState(false);
 
   // 檢查登入狀態
   useEffect(() => {
@@ -43,6 +46,31 @@ export default function Home() {
     }
 
     loadCompletedPeaks();
+  }, [user]);
+
+  // 檢查是否有臨時 username
+  useEffect(() => {
+    async function checkUsername() {
+      if (user) {
+        try {
+          const profile = await getCurrentUserProfile();
+          if (profile && profile.username.startsWith('user_')) {
+            // 系統生成的臨時 username
+            setHasTempUsername(true);
+
+            // 檢查 localStorage 是否已經關閉過提示
+            const dismissed = localStorage.getItem('profile-banner-dismissed');
+            if (!dismissed) {
+              setShowProfileBanner(true);
+            }
+          }
+        } catch (error) {
+          console.error('檢查 username 失敗:', error);
+        }
+      }
+    }
+
+    checkUsername();
   }, [user]);
 
   // 處理新驗證的百岳
@@ -156,6 +184,66 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
+        {/* 個人資料設定提示 */}
+        {showProfileBanner && hasTempUsername && (
+          <div className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-lg p-4 sm:p-5 shadow-lg animate-slide-up">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl sm:text-3xl flex-shrink-0">🎯</span>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1.5 sm:mb-2">
+                  別忘了設定你的個人主頁！
+                </h3>
+                <p className="text-sm sm:text-base text-gray-700 mb-3 leading-relaxed">
+                  你目前使用的是系統自動生成的臨時名稱。完成個人資料設定後，你就能：
+                </p>
+                <ul className="space-y-1.5 text-sm sm:text-base text-gray-700 mb-4">
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>擁有專屬的公開主頁網址</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>分享你的百岳收集進度給朋友</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>生成帶有 QR Code 的精美分享圖片</span>
+                  </li>
+                </ul>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <button
+                    onClick={() => router.push('/profile/edit')}
+                    className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium text-sm sm:text-base min-h-[44px] shadow-sm"
+                  >
+                    立即設定個人資料 →
+                  </button>
+                  <button
+                    onClick={() => {
+                      localStorage.setItem('profile-banner-dismissed', 'true');
+                      setShowProfileBanner(false);
+                    }}
+                    className="px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors text-sm sm:text-base min-h-[44px]"
+                  >
+                    稍後再說
+                  </button>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  localStorage.setItem('profile-banner-dismissed', 'true');
+                  setShowProfileBanner(false);
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 -mt-1 -mr-1 p-1"
+                aria-label="關閉"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* 左右分欄佈局 */}
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           {/* 左側：GPX 上傳區域 (40%) */}
