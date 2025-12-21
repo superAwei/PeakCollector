@@ -287,7 +287,115 @@ export default function ShareButton({
     }
   };
 
-  // 4. 社群媒體分享
+  // 4. IG Stories 專用圖片（9:16 比例）
+  const handleExportIGStory = async () => {
+    try {
+      setIsGenerating(true);
+
+      // 生成 QR Code
+      const qrCodeDataUrl = await QRCode.toDataURL(profileUrl, {
+        width: 500,
+        margin: 2,
+        color: {
+          dark: '#ffffff',
+          light: '#00000000', // 透明背景
+        },
+      });
+
+      // 創建 IG Stories 尺寸的海報（1080x1920）
+      const storyElement = document.createElement('div');
+      storyElement.style.width = '1080px';
+      storyElement.style.height = '1920px';
+      storyElement.style.background = 'linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #3b82f6 100%)';
+      storyElement.style.color = 'white';
+      storyElement.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+      storyElement.style.position = 'fixed';
+      storyElement.style.left = '-9999px';
+      storyElement.style.display = 'flex';
+      storyElement.style.flexDirection = 'column';
+      storyElement.style.alignItems = 'center';
+      storyElement.style.justifyContent = 'center';
+      storyElement.style.padding = '80px 60px';
+      storyElement.style.boxSizing = 'border-box';
+
+      storyElement.innerHTML = `
+        <div style="text-align: center; width: 100%;">
+          <!-- 頂部標題 -->
+          <div style="font-size: 56px; margin-bottom: 40px;">⛰️</div>
+          <h1 style="font-size: 52px; font-weight: bold; margin-bottom: 20px; line-height: 1.2;">
+            ${profile.display_name || profile.username}
+          </h1>
+          <p style="font-size: 36px; opacity: 0.95; margin-bottom: 80px;">
+            @${profile.username}
+          </p>
+
+          <!-- 成就數字 -->
+          <div style="background: rgba(255, 255, 255, 0.25); border-radius: 30px; padding: 60px 50px; margin-bottom: 80px; backdrop-filter: blur(10px);">
+            <div style="font-size: 180px; font-weight: bold; margin-bottom: 20px; line-height: 1;">
+              ${completedCount}
+            </div>
+            <div style="font-size: 40px; opacity: 0.95; margin-bottom: 10px;">
+              座台灣百岳
+            </div>
+            <div style="font-size: 36px; opacity: 0.9;">
+              完成度 ${progress}%
+            </div>
+          </div>
+
+          <!-- QR Code -->
+          <div style="background: white; border-radius: 30px; padding: 40px; margin-bottom: 40px; display: inline-block;">
+            <img src="${qrCodeDataUrl}" style="width: 400px; height: 400px; display: block;" />
+          </div>
+
+          <!-- 說明文字 -->
+          <p style="font-size: 32px; opacity: 0.95; margin-bottom: 15px;">
+            掃描 QR Code 查看我的百岳收集
+          </p>
+          <p style="font-size: 28px; opacity: 0.85; font-family: monospace;">
+            ${profileUrl.replace('https://', '')}
+          </p>
+
+          <!-- 底部標語 -->
+          <div style="margin-top: 60px;">
+            <p style="font-size: 26px; opacity: 0.8;">
+              使用 PeakCollector 記錄百岳征途
+            </p>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(storyElement);
+
+      // 轉換為圖片
+      const canvas = await html2canvas(storyElement, {
+        scale: 2,
+        backgroundColor: null,
+        width: 1080,
+        height: 1920,
+      });
+
+      // 移除臨時元素
+      document.body.removeChild(storyElement);
+
+      // 下載圖片
+      const link = document.createElement('a');
+      link.download = `ig-story-${profile.username}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+
+      // 顯示提示
+      alert('✅ IG Story 圖片已下載！\n\n📱 請開啟 Instagram，將圖片新增到你的限時動態。\n\n朋友可以掃描 QR Code 查看你的百岳收集！');
+
+      setIsGenerating(false);
+      setIsOpen(false);
+    } catch (error) {
+      console.error('匯出 IG Story 失敗:', error);
+      alert('匯出失敗，請稍後再試');
+      setIsGenerating(false);
+    }
+  };
+
+  // 5. 社群媒體分享
   const handleShareToSocial = async () => {
     const shareText = `我在 PeakCollector 已經完成了 ${completedCount} 座台灣百岳！進度 ${progress}%\n\n查看我的百岳收集：${profileUrl}`;
 
@@ -369,6 +477,19 @@ export default function ShareButton({
             </div>
 
             <div className="py-2">
+              {/* IG Stories 專用 */}
+              <button
+                onClick={handleExportIGStory}
+                disabled={isGenerating}
+                className="w-full text-left px-5 md:px-4 py-4 md:py-3 text-base md:text-sm text-gray-700 hover:bg-emerald-50 active:bg-emerald-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-4 md:gap-3 min-h-[60px] md:min-h-0"
+              >
+                <span className="text-2xl md:text-xl">📸</span>
+                <div className="flex-1">
+                  <div className="font-semibold md:font-medium text-gray-900 md:text-gray-700">分享到 IG Stories</div>
+                  <div className="text-sm md:text-xs text-gray-500 mt-0.5">下載專用圖片（含 QR Code）</div>
+                </div>
+              </button>
+
               {/* 成就海報 */}
               <button
                 onClick={handleExportPoster}
