@@ -292,8 +292,9 @@ export default function ShareButton({
     try {
       setIsGenerating(true);
 
-      // 生成 QR Code（使用不透明的白色背景）
-      const qrCodeDataUrl = await QRCode.toDataURL(profileUrl, {
+      // 先生成 QR Code Canvas（不是 DataURL）
+      const qrCanvas = document.createElement('canvas');
+      await QRCode.toCanvas(qrCanvas, profileUrl, {
         width: 400,
         margin: 1,
         color: {
@@ -302,116 +303,84 @@ export default function ShareButton({
         },
       });
 
-      // 創建 IG Stories 尺寸的海報（1080x1920）
-      const storyElement = document.createElement('div');
-      storyElement.style.width = '1080px';
-      storyElement.style.height = '1920px';
-      storyElement.style.background = 'linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #3b82f6 100%)';
-      storyElement.style.color = 'white';
-      storyElement.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-      storyElement.style.position = 'fixed';
-      storyElement.style.left = '-9999px';
-      storyElement.style.display = 'flex';
-      storyElement.style.flexDirection = 'column';
-      storyElement.style.alignItems = 'center';
-      storyElement.style.justifyContent = 'center';
-      storyElement.style.padding = '80px 60px';
-      storyElement.style.boxSizing = 'border-box';
+      // 創建最終的 Canvas（1080x1920）
+      const finalCanvas = document.createElement('canvas');
+      finalCanvas.width = 1080;
+      finalCanvas.height = 1920;
+      const ctx = finalCanvas.getContext('2d')!;
 
-      // 創建內容結構
-      const contentDiv = document.createElement('div');
-      contentDiv.style.textAlign = 'center';
-      contentDiv.style.width = '100%';
+      // 繪製漸層背景
+      const gradient = ctx.createLinearGradient(0, 0, 1080, 1920);
+      gradient.addColorStop(0, '#10b981');
+      gradient.addColorStop(0.5, '#06b6d4');
+      gradient.addColorStop(1, '#3b82f6');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 1080, 1920);
 
-      contentDiv.innerHTML = `
-        <!-- 頂部標題 -->
-        <div style="font-size: 56px; margin-bottom: 40px;">⛰️</div>
-        <h1 style="font-size: 52px; font-weight: bold; margin-bottom: 20px; line-height: 1.2;">
-          ${profile.display_name || profile.username}
-        </h1>
-        <p style="font-size: 36px; opacity: 0.95; margin-bottom: 80px;">
-          @${profile.username}
-        </p>
+      // 設定文字樣式
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'center';
 
-        <!-- 成就數字 -->
-        <div style="background: rgba(255, 255, 255, 0.25); border-radius: 30px; padding: 60px 50px; margin-bottom: 80px; backdrop-filter: blur(10px);">
-          <div style="font-size: 180px; font-weight: bold; margin-bottom: 20px; line-height: 1;">
-            ${completedCount}
-          </div>
-          <div style="font-size: 40px; opacity: 0.95; margin-bottom: 10px;">
-            座台灣百岳
-          </div>
-          <div style="font-size: 36px; opacity: 0.9;">
-            完成度 ${progress}%
-          </div>
-        </div>
+      // 繪製 emoji（⛰️）
+      ctx.font = 'bold 100px Arial';
+      ctx.fillText('⛰️', 540, 180);
 
-        <!-- 說明文字 -->
-        <p style="font-size: 32px; opacity: 0.95; margin-bottom: 15px; margin-top: 40px;">
-          掃描 QR Code 查看我的百岳收集
-        </p>
-        <p style="font-size: 28px; opacity: 0.85; font-family: monospace; margin-bottom: 40px;">
-          ${profileUrl.replace('https://', '')}
-        </p>
+      // 繪製名稱
+      ctx.font = 'bold 80px Arial';
+      ctx.fillText(profile.display_name || profile.username, 540, 300);
 
-        <!-- 底部標語 -->
-        <div style="margin-top: 60px;">
-          <p style="font-size: 26px; opacity: 0.8;">
-            使用 PeakCollector 記錄百岳征途
-          </p>
-        </div>
-      `;
+      // 繪製 @username
+      ctx.globalAlpha = 0.95;
+      ctx.font = '50px Arial';
+      ctx.fillText(`@${profile.username}`, 540, 370);
+      ctx.globalAlpha = 1;
 
-      // 創建 QR Code 容器
-      const qrContainer = document.createElement('div');
-      qrContainer.style.background = 'white';
-      qrContainer.style.borderRadius = '30px';
-      qrContainer.style.padding = '40px';
-      qrContainer.style.marginBottom = '40px';
-      qrContainer.style.display = 'inline-block';
+      // 繪製成就區塊背景
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.beginPath();
+      ctx.roundRect(140, 460, 800, 360, 30);
+      ctx.fill();
 
-      // 創建 QR Code 圖片元素
-      const qrImage = document.createElement('img');
-      qrImage.src = qrCodeDataUrl;
-      qrImage.style.width = '400px';
-      qrImage.style.height = '400px';
-      qrImage.style.display = 'block';
+      // 繪製成就數字
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 240px Arial';
+      ctx.fillText(completedCount.toString(), 540, 680);
 
-      qrContainer.appendChild(qrImage);
+      ctx.font = '50px Arial';
+      ctx.globalAlpha = 0.95;
+      ctx.fillText('座台灣百岳', 540, 750);
 
-      // 找到插入 QR Code 的位置（在成就數字後面）
-      const achievementDiv = contentDiv.querySelector('div[style*="background: rgba(255, 255, 255, 0.25)"]');
-      if (achievementDiv && achievementDiv.parentNode) {
-        achievementDiv.parentNode.insertBefore(qrContainer, achievementDiv.nextSibling);
-      }
+      ctx.font = '48px Arial';
+      ctx.globalAlpha = 0.9;
+      ctx.fillText(`完成度 ${progress}%`, 540, 810);
+      ctx.globalAlpha = 1;
 
-      storyElement.appendChild(contentDiv);
-      document.body.appendChild(storyElement);
+      // 繪製 QR Code 背景（白色圓角矩形）
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.roundRect(260, 890, 560, 560, 30);
+      ctx.fill();
 
-      // 等待圖片載入
-      await new Promise((resolve) => {
-        if (qrImage.complete) {
-          resolve(null);
-        } else {
-          qrImage.onload = () => resolve(null);
-        }
-      });
+      // 繪製 QR Code（居中）
+      ctx.drawImage(qrCanvas, 340, 970, 400, 400);
 
-      // 短暫延遲確保渲染完成
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // 繪製說明文字
+      ctx.fillStyle = 'white';
+      ctx.globalAlpha = 0.95;
+      ctx.font = '42px Arial';
+      ctx.fillText('掃描 QR Code 查看我的百岳收集', 540, 1530);
 
-      // 轉換為圖片
-      const canvas = await html2canvas(storyElement, {
-        scale: 2,
-        backgroundColor: null,
-        width: 1080,
-        height: 1920,
-        useCORS: true,
-        allowTaint: true,
-      });
+      ctx.globalAlpha = 0.85;
+      ctx.font = '36px monospace';
+      ctx.fillText(profileUrl.replace('https://', ''), 540, 1590);
 
-      // 移除臨時元素
-      document.body.removeChild(storyElement);
+      // 繪製底部標語
+      ctx.globalAlpha = 0.8;
+      ctx.font = '34px Arial';
+      ctx.fillText('使用 PeakCollector 記錄百岳征途', 540, 1740);
+      ctx.globalAlpha = 1;
+
+      const canvas = finalCanvas;
 
       // 轉換為 Blob
       const blob = await new Promise<Blob>((resolve) => {
