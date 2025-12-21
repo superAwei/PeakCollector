@@ -413,14 +413,48 @@ export default function ShareButton({
       // 移除臨時元素
       document.body.removeChild(storyElement);
 
-      // 下載圖片
+      // 轉換為 Blob
+      const blob = await new Promise<Blob>((resolve) => {
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+        }, 'image/png');
+      });
+
+      // 嘗試使用 Web Share API（手機原生分享）
+      if (navigator.share && navigator.canShare) {
+        try {
+          const file = new File([blob], `ig-story-${profile.username}.png`, { type: 'image/png' });
+
+          // 檢查是否可以分享檔案
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: `${profile.display_name || profile.username} 的百岳收集`,
+              text: `我已完成 ${completedCount} 座台灣百岳！`,
+            });
+
+            setIsGenerating(false);
+            setIsOpen(false);
+            return;
+          }
+        } catch (error) {
+          // 用戶取消分享或不支援，繼續執行降級方案
+          if ((error as Error).name === 'AbortError') {
+            setIsGenerating(false);
+            setIsOpen(false);
+            return;
+          }
+        }
+      }
+
+      // 降級方案：下載圖片
       const link = document.createElement('a');
       link.download = `ig-story-${profile.username}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
 
       // 顯示提示
-      alert('✅ IG Story 圖片已下載！\n\n📱 請開啟 Instagram，將圖片新增到你的限時動態。\n\n朋友可以掃描 QR Code 查看你的百岳收集！');
+      alert('✅ IG Story 圖片已下載！\n\n📱 請在「下載」或「檔案」中找到圖片，然後：\n1. 長按圖片選擇「儲存圖片」存到相簿\n2. 或直接開啟 Instagram 上傳');
 
       setIsGenerating(false);
       setIsOpen(false);
