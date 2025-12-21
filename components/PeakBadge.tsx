@@ -77,14 +77,17 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
           className={`
             relative transition-all duration-300 transform
             ${isCompleted
-              ? `shadow-lg hover:scale-110 cursor-pointer
-                 ${isManual ? 'ring-4 ring-blue-300 ring-offset-2' : ''}`
+              ? 'shadow-lg hover:scale-110 cursor-pointer'
               : 'hover:scale-105'
             }
             ${isNewlyCompleted ? 'animate-bounce' : ''}
           `}
           onClick={() => isCompleted && setShowDetails(true)}
         >
+          {/* 手動標記的圓形光暈效果 */}
+          {isManual && (
+            <div className="absolute inset-0 rounded-full border-4 border-blue-400 animate-pulse"></div>
+          )}
           {/* 主徽章圖標（圓形） */}
           <div className={`
             w-24 h-24 sm:w-28 sm:h-28
