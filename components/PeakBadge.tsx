@@ -71,119 +71,114 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
 
   return (
     <>
-      <div
-        className={`
-          relative rounded-lg p-4 transition-all duration-300 transform
-          ${isCompleted
-            ? `bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg hover:scale-105 cursor-pointer
-               ${isManual ? 'ring-4 ring-blue-300' : ''}`
-            : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-          }
-          ${isNewlyCompleted ? 'animate-bounce' : ''}
-        `}
-        onClick={() => isCompleted && setShowDetails(true)}
-      >
-        {/* 徽章內容 */}
-        <div className="flex flex-col items-center text-center">
-          {/* 可愛日式圓形徽章圖標 */}
+      <div className="flex flex-col items-center">
+        {/* 圓形徽章容器 */}
+        <div
+          className={`
+            relative transition-all duration-300 transform
+            ${isCompleted
+              ? `shadow-lg hover:scale-110 cursor-pointer
+                 ${isManual ? 'ring-4 ring-blue-300 ring-offset-2' : ''}`
+              : 'hover:scale-105'
+            }
+            ${isNewlyCompleted ? 'animate-bounce' : ''}
+          `}
+          onClick={() => isCompleted && setShowDetails(true)}
+        >
+          {/* 主徽章圖標（圓形） */}
           <div className={`
-            w-20 h-20 mb-2
+            w-24 h-24 sm:w-28 sm:h-28
             ${isCompleted ? 'animate-pulse' : ''}
           `}>
-            <PeakBadgeIcon isCompleted={isCompleted} className="w-full h-full" />
+            <PeakBadgeIcon isCompleted={isCompleted} className="w-full h-full drop-shadow-lg" />
           </div>
 
-          {/* 排名徽章 */}
+          {/* 排名徽章（右上角） */}
           <div className={`
-            absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
+            absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md
             ${isCompleted
-              ? 'bg-white text-emerald-600'
-              : 'bg-gray-300 text-gray-500'
+              ? 'bg-emerald-600 text-white'
+              : 'bg-gray-400 text-white'
             }
           `}>
             #{peak.id}
           </div>
 
-          {/* 手動標記標籤 */}
+          {/* 手動標記標籤（左上角） */}
           {isManual && (
-            <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
+            <div className="absolute -top-1 -left-1 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold shadow-md">
               手動
             </div>
           )}
 
-          {/* 山峰名稱 */}
-          <h3 className={`
-            font-bold text-lg mb-1
-            ${isCompleted ? 'text-white' : 'text-gray-500'}
-          `}>
-            {peak.name}
-          </h3>
-
-          {/* 海拔高度 */}
-          <div className={`
-            text-sm font-medium
-            ${isCompleted ? 'text-emerald-100' : 'text-gray-400'}
-          `}>
-            {peak.altitude.toLocaleString()}m
-          </div>
-
-          {/* 座標精確度標示（未完成時顯示） */}
-          {!isCompleted && (
-            <div className={`mt-2 text-xs px-2 py-1 rounded ${accuracy.color} font-medium`}>
-              {accuracy.stars} {accuracy.label}
+          {/* 新完成動畫標記 */}
+          {isNewlyCompleted && (
+            <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full animate-pulse shadow-lg">
+              NEW!
             </div>
           )}
 
-          {/* 建議手動標記提示 */}
-          {shouldShowManualHint && (
-            <p className="text-xs mt-2 text-gray-500">
-              建議手動標記
-            </p>
-          )}
-
-          {/* 描述 */}
-          {peak.description && !shouldShowManualHint && (
-            <p className={`
-              text-xs mt-2 line-clamp-2
-              ${isCompleted ? 'text-emerald-50' : 'text-gray-400'}
-            `}>
-              {peak.description}
-            </p>
-          )}
-
-          {/* 完成標記 */}
-          {isCompleted && (
-            <div className="mt-3 flex items-center gap-1 text-xs font-semibold">
-              <span>✓</span>
-              <span>已完成</span>
-            </div>
-          )}
-
-          {/* 手動標記按鈕（未完成時顯示） */}
+          {/* 手動標記按鈕（未完成時，顯示在徽章中心） */}
           {!isCompleted && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setShowManualConfirm(true);
               }}
-              className="mt-3 text-xs px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md font-medium transition-colors"
+              className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black/50 rounded-full"
+            >
+              <span className="text-white text-sm font-medium px-3 py-1.5 bg-emerald-500 rounded-full">
+                ✓ 標記
+              </span>
+            </button>
+          )}
+        </div>
+
+        {/* 文字資訊（圓形下方） */}
+        <div className="mt-2 text-center w-full">
+          {/* 山峰名稱 */}
+          <h3 className={`
+            font-bold text-base sm:text-lg mb-0.5
+            ${isCompleted ? 'text-gray-900' : 'text-gray-500'}
+          `}>
+            {peak.name}
+          </h3>
+
+          {/* 海拔高度 */}
+          <div className={`
+            text-xs sm:text-sm font-medium
+            ${isCompleted ? 'text-emerald-600' : 'text-gray-400'}
+          `}>
+            {peak.altitude.toLocaleString()}m
+          </div>
+
+          {/* 座標精確度標示（未完成時顯示） */}
+          {!isCompleted && (
+            <div className={`mt-1 text-xs px-2 py-0.5 rounded inline-block ${accuracy.color} font-medium`}>
+              {accuracy.stars}
+            </div>
+          )}
+
+          {/* 完成標記 */}
+          {isCompleted && (
+            <div className="mt-1 text-xs text-emerald-600 font-semibold">
+              ✓ 已完成
+            </div>
+          )}
+
+          {/* 手動標記按鈕（未完成時，顯示在下方） */}
+          {!isCompleted && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowManualConfirm(true);
+              }}
+              className="mt-2 text-xs px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full font-medium transition-colors shadow-sm w-full"
             >
               ✓ 手動標記
             </button>
           )}
-
-          {/* 新完成動畫標記 */}
-          {isNewlyCompleted && (
-            <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full animate-pulse">
-              NEW!
-            </div>
-          )}
         </div>
-
-        {/* 完成光暈效果 */}
-        {isCompleted && (
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-transparent to-white/20 pointer-events-none"></div>
-        )}
       </div>
 
       {/* 手動標記確認對話框 */}

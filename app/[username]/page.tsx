@@ -184,28 +184,32 @@ export default async function PublicProfilePage({ params }: PageProps) {
               <p className="text-gray-400 text-xs sm:text-sm mt-2">征途才剛開始！</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
               {PEAKS.filter(peak => completedPeakIds.includes(peak.id)).map((peak) => {
                 const record = completedPeaks?.find(p => p.peakId === peak.id);
                 return (
-                  <div
-                    key={peak.id}
-                    className="relative rounded-lg p-3 sm:p-4 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 shadow-lg min-h-[180px] sm:min-h-[200px] hover:scale-105 transition-transform"
-                  >
-                    <div className="flex flex-col items-center text-center">
-                      {/* 可愛日式徽章圖標 */}
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 mb-2">
-                        <PeakBadgeIcon isCompleted={true} className="w-full h-full" />
+                  <div key={peak.id} className="flex flex-col items-center">
+                    {/* 圓形徽章 */}
+                    <div className="relative hover:scale-110 transition-transform">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24">
+                        <PeakBadgeIcon isCompleted={true} className="w-full h-full drop-shadow-lg" />
                       </div>
-                      <div className="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold bg-emerald-600 text-white">
+                      {/* 排名徽章 */}
+                      <div className="absolute -top-1 -right-1 w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-xs font-bold bg-emerald-600 text-white shadow-md">
                         #{peak.id}
                       </div>
-                      <h3 className="font-bold text-base sm:text-lg mb-0.5 sm:mb-1 text-gray-900">{peak.name}</h3>
+                    </div>
+
+                    {/* 文字資訊 */}
+                    <div className="mt-2 text-center w-full">
+                      <h3 className="font-bold text-sm sm:text-base text-gray-900 truncate px-1">
+                        {peak.name}
+                      </h3>
                       <div className="text-xs sm:text-sm text-emerald-600 font-medium">
                         {peak.altitude.toLocaleString()}m
                       </div>
                       {record && (
-                        <div className="text-xs text-gray-600 mt-1.5 sm:mt-2">
+                        <div className="text-xs text-gray-500 mt-1">
                           {new Date(record.completedAt).toLocaleDateString('zh-TW')}
                         </div>
                       )}
