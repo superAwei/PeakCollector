@@ -131,7 +131,9 @@ export default function Home() {
             <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
               <div className="text-3xl sm:text-4xl flex-shrink-0">⛰️</div>
               <div className="min-w-0">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">PeakCollector</h1>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">
+                  PeakCollector <span className="text-xs text-emerald-600">v1.3</span>
+                </h1>
                 <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1 hidden sm:block">台灣百岳收集器</p>
               </div>
             </div>
