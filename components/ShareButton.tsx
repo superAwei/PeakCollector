@@ -292,13 +292,13 @@ export default function ShareButton({
     try {
       setIsGenerating(true);
 
-      // 生成 QR Code
+      // 生成 QR Code（使用不透明的白色背景）
       const qrCodeDataUrl = await QRCode.toDataURL(profileUrl, {
-        width: 500,
-        margin: 2,
+        width: 400,
+        margin: 1,
         color: {
-          dark: '#ffffff',
-          light: '#00000000', // 透明背景
+          dark: '#000000',
+          light: '#ffffff',
         },
       });
 
@@ -318,53 +318,87 @@ export default function ShareButton({
       storyElement.style.padding = '80px 60px';
       storyElement.style.boxSizing = 'border-box';
 
-      storyElement.innerHTML = `
-        <div style="text-align: center; width: 100%;">
-          <!-- 頂部標題 -->
-          <div style="font-size: 56px; margin-bottom: 40px;">⛰️</div>
-          <h1 style="font-size: 52px; font-weight: bold; margin-bottom: 20px; line-height: 1.2;">
-            ${profile.display_name || profile.username}
-          </h1>
-          <p style="font-size: 36px; opacity: 0.95; margin-bottom: 80px;">
-            @${profile.username}
-          </p>
+      // 創建內容結構
+      const contentDiv = document.createElement('div');
+      contentDiv.style.textAlign = 'center';
+      contentDiv.style.width = '100%';
 
-          <!-- 成就數字 -->
-          <div style="background: rgba(255, 255, 255, 0.25); border-radius: 30px; padding: 60px 50px; margin-bottom: 80px; backdrop-filter: blur(10px);">
-            <div style="font-size: 180px; font-weight: bold; margin-bottom: 20px; line-height: 1;">
-              ${completedCount}
-            </div>
-            <div style="font-size: 40px; opacity: 0.95; margin-bottom: 10px;">
-              座台灣百岳
-            </div>
-            <div style="font-size: 36px; opacity: 0.9;">
-              完成度 ${progress}%
-            </div>
+      contentDiv.innerHTML = `
+        <!-- 頂部標題 -->
+        <div style="font-size: 56px; margin-bottom: 40px;">⛰️</div>
+        <h1 style="font-size: 52px; font-weight: bold; margin-bottom: 20px; line-height: 1.2;">
+          ${profile.display_name || profile.username}
+        </h1>
+        <p style="font-size: 36px; opacity: 0.95; margin-bottom: 80px;">
+          @${profile.username}
+        </p>
+
+        <!-- 成就數字 -->
+        <div style="background: rgba(255, 255, 255, 0.25); border-radius: 30px; padding: 60px 50px; margin-bottom: 80px; backdrop-filter: blur(10px);">
+          <div style="font-size: 180px; font-weight: bold; margin-bottom: 20px; line-height: 1;">
+            ${completedCount}
           </div>
-
-          <!-- QR Code -->
-          <div style="background: white; border-radius: 30px; padding: 40px; margin-bottom: 40px; display: inline-block;">
-            <img src="${qrCodeDataUrl}" style="width: 400px; height: 400px; display: block;" />
+          <div style="font-size: 40px; opacity: 0.95; margin-bottom: 10px;">
+            座台灣百岳
           </div>
-
-          <!-- 說明文字 -->
-          <p style="font-size: 32px; opacity: 0.95; margin-bottom: 15px;">
-            掃描 QR Code 查看我的百岳收集
-          </p>
-          <p style="font-size: 28px; opacity: 0.85; font-family: monospace;">
-            ${profileUrl.replace('https://', '')}
-          </p>
-
-          <!-- 底部標語 -->
-          <div style="margin-top: 60px;">
-            <p style="font-size: 26px; opacity: 0.8;">
-              使用 PeakCollector 記錄百岳征途
-            </p>
+          <div style="font-size: 36px; opacity: 0.9;">
+            完成度 ${progress}%
           </div>
+        </div>
+
+        <!-- 說明文字 -->
+        <p style="font-size: 32px; opacity: 0.95; margin-bottom: 15px; margin-top: 40px;">
+          掃描 QR Code 查看我的百岳收集
+        </p>
+        <p style="font-size: 28px; opacity: 0.85; font-family: monospace; margin-bottom: 40px;">
+          ${profileUrl.replace('https://', '')}
+        </p>
+
+        <!-- 底部標語 -->
+        <div style="margin-top: 60px;">
+          <p style="font-size: 26px; opacity: 0.8;">
+            使用 PeakCollector 記錄百岳征途
+          </p>
         </div>
       `;
 
+      // 創建 QR Code 容器
+      const qrContainer = document.createElement('div');
+      qrContainer.style.background = 'white';
+      qrContainer.style.borderRadius = '30px';
+      qrContainer.style.padding = '40px';
+      qrContainer.style.marginBottom = '40px';
+      qrContainer.style.display = 'inline-block';
+
+      // 創建 QR Code 圖片元素
+      const qrImage = document.createElement('img');
+      qrImage.src = qrCodeDataUrl;
+      qrImage.style.width = '400px';
+      qrImage.style.height = '400px';
+      qrImage.style.display = 'block';
+
+      qrContainer.appendChild(qrImage);
+
+      // 找到插入 QR Code 的位置（在成就數字後面）
+      const achievementDiv = contentDiv.querySelector('div[style*="background: rgba(255, 255, 255, 0.25)"]');
+      if (achievementDiv && achievementDiv.parentNode) {
+        achievementDiv.parentNode.insertBefore(qrContainer, achievementDiv.nextSibling);
+      }
+
+      storyElement.appendChild(contentDiv);
       document.body.appendChild(storyElement);
+
+      // 等待圖片載入
+      await new Promise((resolve) => {
+        if (qrImage.complete) {
+          resolve(null);
+        } else {
+          qrImage.onload = () => resolve(null);
+        }
+      });
+
+      // 短暫延遲確保渲染完成
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // 轉換為圖片
       const canvas = await html2canvas(storyElement, {
@@ -372,6 +406,8 @@ export default function ShareButton({
         backgroundColor: null,
         width: 1080,
         height: 1920,
+        useCORS: true,
+        allowTaint: true,
       });
 
       // 移除臨時元素
