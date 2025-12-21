@@ -10,7 +10,7 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcode';
 import jsPDF from 'jspdf';
@@ -31,11 +31,22 @@ export default function ShareButton({
 }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // 產生公開主頁網址
   const profileUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/@${profile.username}`
     : `https://peakcollector.com/@${profile.username}`;
+
+  // 檢測是否為手機裝置
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 1. 匯出成就海報（圖片）
   const handleExportPoster = async () => {
@@ -307,11 +318,33 @@ export default function ShareButton({
     }
   };
 
+  // 處理分享按鈕點擊
+  const handleShareClick = async () => {
+    // 手機裝置優先使用原生分享
+    if (isMobile && navigator.share) {
+      try {
+        await navigator.share({
+          title: `${profile.display_name || profile.username} 的百岳收集`,
+          text: `我在 PeakCollector 已經完成了 ${completedCount} 座台灣百岳！進度 ${progress}%`,
+          url: profileUrl,
+        });
+      } catch (error) {
+        // 使用者取消分享或不支援，顯示自定義選單
+        if ((error as Error).name !== 'AbortError') {
+          setIsOpen(true);
+        }
+      }
+    } else {
+      // 桌面版或不支援原生分享，顯示自定義選單
+      setIsOpen(!isOpen);
+    }
+  };
+
   return (
     <div className="relative">
       {/* 分享按鈕 */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleShareClick}
         className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg shadow-lg transition-all duration-200 font-medium text-sm sm:text-base min-h-[44px] whitespace-nowrap"
         aria-label="分享成就"
       >
@@ -331,7 +364,7 @@ export default function ShareButton({
           />
 
           {/* 選單內容 */}
-          <div className="absolute left-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-20">
+          <div className="absolute right-0 mt-2 w-64 sm:w-72 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-20 max-w-[calc(100vw-2rem)]">
             <div className="px-4 py-2 border-b border-gray-100">
               <p className="text-sm font-medium text-gray-700">選擇分享方式</p>
             </div>
