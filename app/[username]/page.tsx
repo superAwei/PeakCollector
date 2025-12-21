@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase/server';
 import { PEAKS } from '@/lib/peaks-data';
 import Link from 'next/link';
 import ShareButton from '@/components/ShareButton';
+import PeakBadgeIcon from '@/components/PeakBadgeIcon';
 
 // 強制動態渲染（因為內容依賴使用者資料）
 export const dynamic = 'force-dynamic';
@@ -189,24 +190,26 @@ export default async function PublicProfilePage({ params }: PageProps) {
                 return (
                   <div
                     key={peak.id}
-                    className="relative rounded-lg p-3 sm:p-4 bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg min-h-[120px] sm:min-h-[140px]"
+                    className="relative rounded-lg p-3 sm:p-4 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 shadow-lg min-h-[180px] sm:min-h-[200px] hover:scale-105 transition-transform"
                   >
                     <div className="flex flex-col items-center text-center">
-                      <div className="text-2xl sm:text-3xl mb-1.5 sm:mb-2">⛰️</div>
-                      <div className="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold bg-white text-emerald-600">
+                      {/* 可愛日式徽章圖標 */}
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 mb-2">
+                        <PeakBadgeIcon isCompleted={true} className="w-full h-full" />
+                      </div>
+                      <div className="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold bg-emerald-600 text-white">
                         #{peak.id}
                       </div>
-                      <h3 className="font-bold text-base sm:text-lg mb-0.5 sm:mb-1">{peak.name}</h3>
-                      <div className="text-xs sm:text-sm text-emerald-100">
+                      <h3 className="font-bold text-base sm:text-lg mb-0.5 sm:mb-1 text-gray-900">{peak.name}</h3>
+                      <div className="text-xs sm:text-sm text-emerald-600 font-medium">
                         {peak.altitude.toLocaleString()}m
                       </div>
                       {record && (
-                        <div className="text-xs text-emerald-100 mt-1.5 sm:mt-2">
+                        <div className="text-xs text-gray-600 mt-1.5 sm:mt-2">
                           {new Date(record.completedAt).toLocaleDateString('zh-TW')}
                         </div>
                       )}
                     </div>
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-transparent to-white/20 pointer-events-none"></div>
                   </div>
                 );
               })}

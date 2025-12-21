@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Peak } from '@/lib/peaks-data';
 import { CompletedPeak, saveCompletedPeaks, getPeakRecord, deletePeakRecord } from '@/lib/storage';
 import Modal from './Modal';
+import PeakBadgeIcon from './PeakBadgeIcon';
 
 interface PeakBadgeProps {
   peak: Peak;
@@ -84,12 +85,12 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
       >
         {/* 徽章內容 */}
         <div className="flex flex-col items-center text-center">
-          {/* 山峰圖標 */}
+          {/* 可愛日式圓形徽章圖標 */}
           <div className={`
-            text-4xl mb-2
+            w-20 h-20 mb-2
             ${isCompleted ? 'animate-pulse' : ''}
           `}>
-            {isCompleted ? '⛰️' : '🗻'}
+            <PeakBadgeIcon isCompleted={isCompleted} className="w-full h-full" />
           </div>
 
           {/* 排名徽章 */}
