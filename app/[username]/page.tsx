@@ -55,6 +55,11 @@ export default async function PublicProfilePage({ params }: PageProps) {
     .eq('user_id', profile.id)
     .order('completedAt', { ascending: false });
 
+  // 輸出錯誤訊息以便除錯
+  if (peaksError) {
+    console.error('❌ 查詢 completed_peaks 失敗:', peaksError);
+  }
+
   const completedPeakIds = completedPeaks?.map(p => p.peakId) || [];
   const completedCount = completedPeakIds.length;
   const totalCount = PEAKS.length;
