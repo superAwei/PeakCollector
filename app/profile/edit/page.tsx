@@ -93,8 +93,8 @@ export default function ProfileEditPage() {
       // 更新 profile
       await updateProfile({
         username,
-        display_name: displayName.trim() || null,
-        bio: bio.trim() || null,
+        display_name: displayName.trim() || undefined,
+        bio: bio.trim() || undefined,
         is_public: isPublic,
       });
 
