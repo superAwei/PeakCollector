@@ -19,6 +19,14 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLineApp, setIsLineApp] = useState(false);
+
+  // 檢測是否在 LINE 內建瀏覽器中
+  useEffect(() => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isInLineApp = userAgent.includes('line');
+    setIsLineApp(isInLineApp);
+  }, []);
 
   // 檢查 URL 中的錯誤參數
   useEffect(() => {
@@ -145,10 +153,35 @@ function LoginContent() {
             </div>
           )}
 
+          {/* LINE 瀏覽器提示 */}
+          {isLineApp && (
+            <div className="mb-6 p-4 bg-amber-50 border-2 border-amber-300 rounded-lg animate-pulse">
+              <div className="flex items-start gap-3">
+                <span className="text-2xl flex-shrink-0">⚠️</span>
+                <div className="flex-1">
+                  <h3 className="text-sm font-bold text-amber-900 mb-2">
+                    請使用外部瀏覽器開啟
+                  </h3>
+                  <p className="text-xs text-amber-800 leading-relaxed mb-3">
+                    由於 Google 安全政策，無法在 LINE 內建瀏覽器中登入。
+                  </p>
+                  <div className="bg-white rounded-lg p-3 border border-amber-200">
+                    <p className="text-xs font-semibold text-amber-900 mb-2">📱 操作步驟：</p>
+                    <ol className="text-xs text-amber-800 space-y-1.5 list-decimal list-inside">
+                      <li>點擊右上角 <strong>「⋯」</strong> 選單</li>
+                      <li>選擇 <strong>「在 Safari 中開啟」</strong></li>
+                      <li>或選擇 <strong>「在 Chrome 中開啟」</strong></li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Google 登入按鈕 */}
           <button
             onClick={handleGoogleLogin}
-            disabled={isLoading}
+            disabled={isLoading || isLineApp}
             className="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-4 px-6 rounded-lg border-2 border-gray-300 hover:border-gray-400 transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
           >
             {isLoading ? (
