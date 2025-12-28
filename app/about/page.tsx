@@ -190,10 +190,10 @@ export default function AboutPage() {
               <div>
                 <div className="font-semibold text-gray-900">Email</div>
                 <a
-                  href="mailto:contact@peakcollector.tw"
+                  href="mailto:peakcollector2025@gmail.com"
                   className="text-emerald-600 hover:text-emerald-700 hover:underline"
                 >
-                  contact@peakcollector.tw
+                  peakcollector2025@gmail.com
                 </a>
               </div>
             </div>
@@ -203,47 +203,12 @@ export default function AboutPage() {
               <div>
                 <div className="font-semibold text-gray-900">問題回報</div>
                 <a
-                  href="https://github.com/superAwei/PeakCollector/issues"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="mailto:peakcollector2025@gmail.com?subject=問題回報"
                   className="text-emerald-600 hover:text-emerald-700 hover:underline"
                 >
-                  點此填寫回饋表單 →
+                  寄信給我們 →
                 </a>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Open Source Section */}
-        <section className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-emerald-600 mb-6 flex items-center gap-3">
-            <span className="text-3xl">💻</span>
-            <span>開源專案</span>
-          </h2>
-
-          <p className="text-gray-700 mb-6 leading-relaxed">
-            PeakCollector 是一個開源專案，技術愛好者歡迎一起貢獻！
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 bg-gradient-to-r from-gray-50 to-emerald-50 rounded-lg border border-emerald-200">
-              <div className="font-semibold text-gray-900 mb-2">GitHub</div>
-              <a
-                href="https://github.com/superAwei/PeakCollector"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-emerald-600 hover:text-emerald-700 hover:underline text-sm break-all"
-              >
-                github.com/superAwei/PeakCollector →
-              </a>
-            </div>
-
-            <div className="p-4 bg-gradient-to-r from-gray-50 to-teal-50 rounded-lg border border-teal-200">
-              <div className="font-semibold text-gray-900 mb-2">技術棧</div>
-              <p className="text-gray-600 text-sm">
-                Next.js 16 + React 19 + Supabase + TypeScript
-              </p>
             </div>
           </div>
         </section>
