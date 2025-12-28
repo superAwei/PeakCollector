@@ -237,6 +237,14 @@ function LoginContent() {
               一鍵登入，立即開始記錄你的登頂成就<br />
               加入台灣登山社群，分享你的百岳故事
             </p>
+            <div className="mt-4 pt-4 border-t border-gray-300">
+              <a
+                href="/about"
+                className="text-xs text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
+              >
+                關於 PeakCollector →
+              </a>
+            </div>
           </div>
         </div>
       </div>

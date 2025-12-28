@@ -298,6 +298,23 @@ export default function Home() {
           <p className="mt-1">
             完整版本：收錄台灣全部 100 座百岳資料
           </p>
+          <div className="mt-3 flex items-center justify-center gap-4">
+            <button
+              onClick={() => router.push('/about')}
+              className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
+            >
+              關於我們
+            </button>
+            <span className="text-gray-300">|</span>
+            <a
+              href="https://github.com/superAwei/PeakCollector/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
+            >
+              問題回報
+            </a>
+          </div>
         </div>
       </main>
       </div>

@@ -166,6 +166,21 @@ export default function UserMenu() {
             {/* 分隔線 */}
             <div className="border-t border-gray-100 my-1" />
 
+            {/* 關於我們 */}
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                router.push('/about');
+              }}
+              className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors flex items-center gap-2 min-h-[44px]"
+            >
+              <span className="text-base">ℹ️</span>
+              <span>關於我們</span>
+            </button>
+
+            {/* 分隔線 */}
+            <div className="border-t border-gray-100 my-1" />
+
             {/* 登出按鈕 */}
             <button
               onClick={handleLogout}

@@ -224,6 +224,23 @@ export default async function PublicProfilePage({ params }: PageProps) {
         {/* Footer */}
         <div className="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-500 px-3">
           <p>使用 <Link href="/" className="text-emerald-600 hover:text-emerald-700 font-medium">PeakCollector</Link> 記錄你的百岳征途</p>
+          <div className="mt-3 flex items-center justify-center gap-4">
+            <Link
+              href="/about"
+              className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
+            >
+              關於我們
+            </Link>
+            <span className="text-gray-300">|</span>
+            <a
+              href="https://github.com/superAwei/PeakCollector/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
+            >
+              問題回報
+            </a>
+          </div>
         </div>
       </main>
     </div>
