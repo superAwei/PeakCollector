@@ -233,9 +233,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
             </Link>
             <span className="text-gray-300">|</span>
             <a
-              href="https://github.com/superAwei/PeakCollector/issues"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:peakcollector2025@gmail.com?subject=問題回報"
               className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
             >
               問題回報
