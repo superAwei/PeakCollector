@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase/server';
 import { PEAKS } from '@/lib/peaks-data';
 import Link from 'next/link';
 import ShareButton from '@/components/ShareButton';
+import PageViewTracker from '@/components/PageViewTracker';
 import { getBadgeStyle, getBadgeImagePath, getBadgeStyleName } from '@/lib/badge-styles';
 
 // 強制動態渲染（因為內容依賴使用者資料）
@@ -68,8 +69,12 @@ export default async function PublicProfilePage({ params }: PageProps) {
   const progress = Math.round((completedCount / totalCount) * 100);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50">
-      {/* Header */}
+    <>
+      {/* 追蹤頁面瀏覽 */}
+      <PageViewTracker username={username} />
+
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50">
+        {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex items-center justify-between gap-3">
@@ -263,6 +268,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
           </div>
         </div>
       </main>
-    </div>
+      </div>
+    </>
   );
 }

@@ -6,6 +6,7 @@ import { Peak } from '@/lib/peaks-data';
 import { CompletedPeak, saveCompletedPeaks, getPeakRecord, deletePeakRecord } from '@/lib/storage';
 import Modal from './Modal';
 import { getBadgeStyle, getBadgeImagePath, getBadgeStyleName } from '@/lib/badge-styles';
+import { trackManualMarkPeak, trackUnmarkPeak, trackViewPeakDetails } from '@/lib/analytics';
 
 interface PeakBadgeProps {
   peak: Peak;
@@ -40,6 +41,10 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
   const handleManualMark = async () => {
     try {
       await saveCompletedPeaks([peak.id], undefined, 'manual');
+
+      // 追蹤手動標記事件
+      trackManualMarkPeak(peak.id, peak.name);
+
       setShowManualConfirm(false);
       onUpdate?.(); // 等資料儲存完成後再更新
     } catch (error) {
@@ -52,6 +57,10 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
   const handleDelete = async () => {
     try {
       await deletePeakRecord(peak.id);
+
+      // 追蹤取消標記事件
+      trackUnmarkPeak(peak.id, peak.name);
+
       setShowDeleteConfirm(false);
       setShowDetails(false);
       onUpdate?.(); // 等資料刪除完成後再更新
@@ -88,7 +97,13 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
             }
             ${isNewlyCompleted ? 'animate-bounce' : ''}
           `}
-          onClick={() => isCompleted && setShowDetails(true)}
+          onClick={() => {
+            if (isCompleted) {
+              // 追蹤查看百岳詳情事件
+              trackViewPeakDetails(peak.id, peak.name);
+              setShowDetails(true);
+            }
+          }}
         >
           {/* 手動標記的圓形光暈效果 */}
           {isManual && (

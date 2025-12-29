@@ -13,6 +13,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { PEAKS, DEMO_PEAKS_COUNT } from '@/lib/peaks-data';
 import { getCompletedPeakIds, clearCompletedPeaks } from '@/lib/storage';
 import { getCurrentUserProfile } from '@/lib/profile';
+import { trackResetProgress, trackViewAbout, trackReportIssue } from '@/lib/analytics';
 
 export default function Home() {
   const router = useRouter();
@@ -109,6 +110,9 @@ export default function Home() {
   const handleReset = async () => {
     if (confirm('確定要清除所有已完成記錄嗎？此操作無法復原。')) {
       try {
+        // 追蹤重置進度事件（在清除前記錄數量）
+        trackResetProgress(completedPeakIds.length);
+
         await clearCompletedPeaks();
         setCompletedPeakIds([]);
         setNewlyCompletedIds([]);
@@ -319,7 +323,10 @@ export default function Home() {
           </p>
           <div className="mt-3 flex items-center justify-center gap-4">
             <button
-              onClick={() => router.push('/about')}
+              onClick={() => {
+                trackViewAbout();
+                router.push('/about');
+              }}
               className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
             >
               關於我們
@@ -327,6 +334,7 @@ export default function Home() {
             <span className="text-gray-300">|</span>
             <a
               href="mailto:peakcollector2025@gmail.com?subject=問題回報"
+              onClick={() => trackReportIssue()}
               className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
             >
               問題回報

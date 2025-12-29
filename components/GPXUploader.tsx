@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { parseGPX, findVisitedPeaks, readFileAsText } from '@/lib/gpx-utils';
 import { PEAKS } from '@/lib/peaks-data';
 import { saveCompletedPeaks } from '@/lib/storage';
+import { trackGPXUploadSuccess, trackGPXUploadFail } from '@/lib/analytics';
 
 interface GPXUploaderProps {
   onPeaksVerified: (peakIds: number[]) => void;
@@ -37,6 +38,9 @@ export default function GPXUploader({ onPeaksVerified }: GPXUploaderProps) {
       const visitedPeakIds = findVisitedPeaks(gpxData, PEAKS);
 
       if (visitedPeakIds.length === 0) {
+        // 追蹤 GPX 上傳失敗（沒有經過任何百岳）
+        trackGPXUploadFail('沒有經過任何百岳山頂（100公尺範圍內）');
+
         setMessage({
           type: 'info',
           text: '此 GPX 檔案沒有經過任何百岳山頂（100公尺範圍內）',
@@ -44,6 +48,9 @@ export default function GPXUploader({ onPeaksVerified }: GPXUploaderProps) {
       } else {
         // 儲存到 Supabase（等待完成）
         await saveCompletedPeaks(visitedPeakIds, file.name);
+
+        // 追蹤 GPX 上傳成功
+        trackGPXUploadSuccess(visitedPeakIds.length, file.name);
 
         // 通知父組件（等資料儲存完成後再通知）
         onPeaksVerified(visitedPeakIds);
@@ -60,9 +67,14 @@ export default function GPXUploader({ onPeaksVerified }: GPXUploaderProps) {
       }
     } catch (error) {
       console.error('GPX 處理錯誤:', error);
+
+      // 追蹤 GPX 上傳失敗
+      const errorMessage = error instanceof Error ? error.message : 'GPX 檔案處理失敗';
+      trackGPXUploadFail(errorMessage);
+
       setMessage({
         type: 'error',
-        text: error instanceof Error ? error.message : 'GPX 檔案處理失敗',
+        text: errorMessage,
       });
     } finally {
       setIsProcessing(false);

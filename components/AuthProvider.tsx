@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { migrateFromLocalStorage, hasLegacyData } from '@/lib/storage';
 import type { User } from '@/lib/types';
+import { trackSignUp, trackLogin } from '@/lib/analytics';
 
 // 定義 Context 型別
 interface AuthContextType {
@@ -94,6 +95,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (session?.user) {
           setUser(session.user);
+
+          // 追蹤登入/註冊事件
+          if (event === 'SIGNED_IN') {
+            // 註冊和登入都會觸發 SIGNED_IN，統一追蹤為 login
+            trackLogin('google');
+          }
 
           // 登入成功後，嘗試遷移 localStorage 資料（只在首次登入時）
           if (event === 'SIGNED_IN' && hasLegacyData() && !migrationAttemptedRef.current) {

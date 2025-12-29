@@ -16,6 +16,7 @@ import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { getCurrentUserProfile, updateProfile, isUsernameAvailable } from '@/lib/profile';
 import type { Profile } from '@/lib/types';
+import { trackEditProfile, trackProfileComplete } from '@/lib/analytics';
 
 // 強制動態渲染
 export const dynamic = 'force-dynamic';
@@ -111,6 +112,14 @@ function ProfileEditContent() {
         bio: bio.trim() || undefined,
         is_public: isPublic,
       });
+
+      // 追蹤個人資料編輯事件
+      trackEditProfile(isFirstTime);
+
+      // 如果是首次設定，追蹤完成個人資料設定
+      if (isFirstTime) {
+        trackProfileComplete();
+      }
 
       setSuccess(true);
 
