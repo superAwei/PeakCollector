@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Peak } from '@/lib/peaks-data';
 import { CompletedPeak, saveCompletedPeaks, getPeakRecord, deletePeakRecord } from '@/lib/storage';
 import Modal from './Modal';
-import PeakBadgeIcon from './PeakBadgeIcon';
+import { getBadgeStyle, getBadgeImagePath, getBadgeStyleName } from '@/lib/badge-styles';
 
 interface PeakBadgeProps {
   peak: Peak;
@@ -18,6 +19,11 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
   const [showDetails, setShowDetails] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [record, setRecord] = useState<CompletedPeak | undefined>(undefined);
+
+  // 取得徽章樣式
+  const badgeStyle = getBadgeStyle(peak);
+  const badgeImagePath = getBadgeImagePath(badgeStyle);
+  const badgeAltText = `${peak.name} - ${getBadgeStyleName(badgeStyle)}`;
 
   // 載入完成記錄
   useEffect(() => {
@@ -90,10 +96,20 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
           )}
           {/* 主徽章圖標（圓形） */}
           <div className={`
-            w-24 h-24 sm:w-28 sm:h-28
-            ${isCompleted ? 'animate-pulse' : ''}
+            relative w-24 h-24 sm:w-28 sm:h-28
+            ${!isCompleted ? 'grayscale' : ''}
+            transition-all duration-300
           `}>
-            <PeakBadgeIcon isCompleted={isCompleted} className="w-full h-full drop-shadow-lg" />
+            <Image
+              src={badgeImagePath}
+              alt={badgeAltText}
+              width={112}
+              height={112}
+              className="w-full h-full drop-shadow-lg rounded-full object-cover"
+              loading="lazy"
+              quality={90}
+              priority={false}
+            />
           </div>
 
           {/* 排名徽章（右上角） */}

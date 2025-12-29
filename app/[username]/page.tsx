@@ -6,11 +6,12 @@
  */
 
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import { PEAKS } from '@/lib/peaks-data';
 import Link from 'next/link';
 import ShareButton from '@/components/ShareButton';
-import PeakBadgeIcon from '@/components/PeakBadgeIcon';
+import { getBadgeStyle, getBadgeImagePath, getBadgeStyleName } from '@/lib/badge-styles';
 
 // 強制動態渲染（因為內容依賴使用者資料）
 export const dynamic = 'force-dynamic';
@@ -187,12 +188,24 @@ export default async function PublicProfilePage({ params }: PageProps) {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
               {PEAKS.filter(peak => completedPeakIds.includes(peak.id)).map((peak) => {
                 const record = completedPeaks?.find(p => p.peakId === peak.id);
+                const badgeStyle = getBadgeStyle(peak);
+                const badgeImagePath = getBadgeImagePath(badgeStyle);
+                const badgeAltText = `${peak.name} - ${getBadgeStyleName(badgeStyle)}`;
+
                 return (
                   <div key={peak.id} className="flex flex-col items-center">
                     {/* 圓形徽章 */}
                     <div className="relative hover:scale-110 transition-transform">
-                      <div className="w-20 h-20 sm:w-24 sm:h-24">
-                        <PeakBadgeIcon isCompleted={true} className="w-full h-full drop-shadow-lg" />
+                      <div className="relative w-20 h-20 sm:w-24 sm:h-24 transition-all duration-300">
+                        <Image
+                          src={badgeImagePath}
+                          alt={badgeAltText}
+                          width={96}
+                          height={96}
+                          className="w-full h-full drop-shadow-lg rounded-full object-cover"
+                          loading="lazy"
+                          quality={90}
+                        />
                       </div>
                       {/* 排名徽章 */}
                       <div className="absolute -top-1 -right-1 w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-xs font-bold bg-emerald-600 text-white shadow-md">
