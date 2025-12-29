@@ -12,6 +12,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/components/AuthProvider';
 import { getCurrentUserProfile, updateProfile, isUsernameAvailable } from '@/lib/profile';
 import type { Profile } from '@/lib/types';
@@ -130,7 +131,16 @@ function ProfileEditContent() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">⛰️</div>
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/weblogo.png"
+              alt="PeakCollector Logo"
+              width={96}
+              height={96}
+              className="w-20 h-20 sm:w-24 sm:h-24"
+              priority
+            />
+          </div>
           <div className="text-xl text-gray-600">載入中...</div>
         </div>
       </div>
@@ -155,7 +165,16 @@ function ProfileEditContent() {
             >
               ← <span className="hidden sm:inline ml-1">返回</span>
             </button>
-            <div className="text-3xl sm:text-4xl flex-shrink-0">⛰️</div>
+            <div className="flex-shrink-0">
+              <Image
+                src="/weblogo.png"
+                alt="PeakCollector Logo"
+                width={48}
+                height={48}
+                className="w-10 h-10 sm:w-12 sm:h-12"
+                priority
+              />
+            </div>
             <div className="min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">編輯個人資料</h1>
               <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">設定你的公開主頁資訊</p>
@@ -331,7 +350,16 @@ export default function ProfileEditPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">⛰️</div>
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/weblogo.png"
+              alt="PeakCollector Logo"
+              width={96}
+              height={96}
+              className="w-20 h-20 sm:w-24 sm:h-24"
+              priority
+            />
+          </div>
           <div className="text-xl text-gray-600">載入中...</div>
         </div>
       </div>

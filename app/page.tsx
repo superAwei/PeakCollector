@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import ProgressStats from '@/components/ProgressStats';
 import PeakBadge from '@/components/PeakBadge';
 import GPXUploader from '@/components/GPXUploader';
@@ -134,7 +135,16 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">⛰️</div>
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/weblogo.png"
+              alt="PeakCollector Logo"
+              width={96}
+              height={96}
+              className="w-20 h-20 sm:w-24 sm:h-24"
+              priority
+            />
+          </div>
           <div className="text-xl text-gray-600">載入中...</div>
         </div>
       </div>
@@ -157,7 +167,16 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex items-center justify-between gap-2 sm:gap-4">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-              <div className="text-3xl sm:text-4xl flex-shrink-0">⛰️</div>
+              <div className="flex-shrink-0">
+                <Image
+                  src="/weblogo.png"
+                  alt="PeakCollector Logo"
+                  width={48}
+                  height={48}
+                  className="w-10 h-10 sm:w-12 sm:h-12"
+                  priority
+                />
+              </div>
               <div className="min-w-0">
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">
                   PeakCollector <span className="text-xs text-emerald-600">v1.3</span>

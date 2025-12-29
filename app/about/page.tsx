@@ -6,6 +6,7 @@
  */
 
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -32,7 +33,16 @@ export default function AboutPage() {
             >
               ← <span className="ml-1">返回首頁</span>
             </Link>
-            <div className="text-3xl sm:text-4xl flex-shrink-0">⛰️</div>
+            <div className="flex-shrink-0">
+              <Image
+                src="/weblogo.png"
+                alt="PeakCollector Logo"
+                width={48}
+                height={48}
+                className="w-10 h-10 sm:w-12 sm:h-12"
+                priority
+              />
+            </div>
             <div>
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">關於我們</h1>
               <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">About PeakCollector</p>

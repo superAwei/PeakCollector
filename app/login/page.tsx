@@ -9,6 +9,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase/client';
 
 // 強制動態渲染（避免 build 時 prerender 錯誤）
@@ -83,7 +84,16 @@ function LoginContent() {
         <div className="bg-white rounded-2xl shadow-2xl p-8 sm:p-12">
           {/* Logo 和標題 */}
           <div className="text-center mb-8">
-            <div className="text-6xl mb-4">⛰️</div>
+            <div className="flex justify-center mb-4">
+              <Image
+                src="/weblogo.png"
+                alt="PeakCollector Logo"
+                width={96}
+                height={96}
+                className="w-20 h-20 sm:w-24 sm:h-24"
+                priority
+              />
+            </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               PeakCollector
             </h1>
@@ -258,7 +268,16 @@ export default function LoginPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">⛰️</div>
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/weblogo.png"
+              alt="PeakCollector Logo"
+              width={96}
+              height={96}
+              className="w-20 h-20 sm:w-24 sm:h-24"
+              priority
+            />
+          </div>
           <div className="text-xl text-gray-600">載入中...</div>
         </div>
       </div>

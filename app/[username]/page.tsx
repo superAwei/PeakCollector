@@ -74,7 +74,16 @@ export default async function PublicProfilePage({ params }: PageProps) {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex items-center justify-between gap-3">
             <Link href="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity min-w-0 flex-1">
-              <div className="text-3xl sm:text-4xl flex-shrink-0">⛰️</div>
+              <div className="flex-shrink-0">
+                <Image
+                  src="/weblogo.png"
+                  alt="PeakCollector Logo"
+                  width={48}
+                  height={48}
+                  className="w-10 h-10 sm:w-12 sm:h-12"
+                  priority
+                />
+              </div>
               <div className="min-w-0">
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">PeakCollector</h1>
                 <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">台灣百岳數位護照</p>
