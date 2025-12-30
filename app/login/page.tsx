@@ -11,6 +11,8 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase/client';
+import { isInAppBrowser, getOS } from '@/lib/browser-detection';
+import { AlertTriangle } from 'lucide-react';
 
 // 強制動態渲染（避免 build 時 prerender 錯誤）
 export const dynamic = 'force-dynamic';
@@ -20,13 +22,15 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isLineApp, setIsLineApp] = useState(false);
+  const [isInApp, setIsInApp] = useState(false);
+  const [os, setOS] = useState<'ios' | 'android' | 'other'>('other');
 
-  // 檢測是否在 LINE 內建瀏覽器中
+  // 檢測是否在社群 App 內建瀏覽器中
   useEffect(() => {
-    const userAgent = navigator.userAgent.toLowerCase();
-    const isInLineApp = userAgent.includes('line');
-    setIsLineApp(isInLineApp);
+    const inApp = isInAppBrowser();
+    const userOS = getOS();
+    setIsInApp(inApp);
+    setOS(userOS);
   }, []);
 
   // 檢查 URL 中的錯誤參數
@@ -163,25 +167,40 @@ function LoginContent() {
             </div>
           )}
 
-          {/* LINE 瀏覽器提示 */}
-          {isLineApp && (
-            <div className="mb-6 p-4 bg-amber-50 border-2 border-amber-300 rounded-lg animate-pulse">
+          {/* 社群 App 內建瀏覽器警告 */}
+          {isInApp && (
+            <div className="mb-6 p-4 bg-amber-50 border-2 border-amber-300 rounded-lg">
               <div className="flex items-start gap-3">
-                <span className="text-2xl flex-shrink-0">⚠️</span>
+                <AlertTriangle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <h3 className="text-sm font-bold text-amber-900 mb-2">
-                    請使用外部瀏覽器開啟
+                    無法在此登入
                   </h3>
                   <p className="text-xs text-amber-800 leading-relaxed mb-3">
-                    由於 Google 安全政策，無法在 LINE 內建瀏覽器中登入。
+                    Google 基於安全考量，不允許在社群 App 內建瀏覽器中登入。
+                    請在 Safari、Chrome 等瀏覽器中開啟。
                   </p>
                   <div className="bg-white rounded-lg p-3 border border-amber-200">
-                    <p className="text-xs font-semibold text-amber-900 mb-2">📱 操作步驟：</p>
-                    <ol className="text-xs text-amber-800 space-y-1.5 list-decimal list-inside">
-                      <li>點擊右上角 <strong>「⋯」</strong> 選單</li>
-                      <li>選擇 <strong>「在 Safari 中開啟」</strong></li>
-                      <li>或選擇 <strong>「在 Chrome 中開啟」</strong></li>
-                    </ol>
+                    <p className="text-xs font-semibold text-amber-900 mb-2">📱 如何開啟？</p>
+                    {os === 'ios' && (
+                      <ol className="text-xs text-amber-800 space-y-1.5 list-decimal list-inside">
+                        <li>點擊右上角的 <strong>「⋯」</strong> 選單</li>
+                        <li>選擇 <strong>「在 Safari 中開啟」</strong></li>
+                        <li>即可正常登入使用</li>
+                      </ol>
+                    )}
+                    {os === 'android' && (
+                      <ol className="text-xs text-amber-800 space-y-1.5 list-decimal list-inside">
+                        <li>點擊右上角的 <strong>「⋮」</strong> 選單</li>
+                        <li>選擇 <strong>「在瀏覽器中開啟」</strong></li>
+                        <li>選擇 Chrome 或其他瀏覽器</li>
+                      </ol>
+                    )}
+                    {os === 'other' && (
+                      <p className="text-xs text-amber-800">
+                        請點擊右上角選單，選擇「在瀏覽器中開啟」
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -191,7 +210,7 @@ function LoginContent() {
           {/* Google 登入按鈕 */}
           <button
             onClick={handleGoogleLogin}
-            disabled={isLoading || isLineApp}
+            disabled={isLoading || isInApp}
             className="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-4 px-6 rounded-lg border-2 border-gray-300 hover:border-gray-400 transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
           >
             {isLoading ? (

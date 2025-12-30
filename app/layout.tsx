@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import ClientLayout from "@/components/ClientLayout";
+import OpenInBrowserPrompt from "@/components/OpenInBrowserPrompt";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* 嵌入式瀏覽器提示（最高層級，z-index: 300） */}
+        <OpenInBrowserPrompt />
+
         {gaId && <GoogleAnalytics gaId={gaId} />}
         <ClientLayout>
           <AuthProvider>
