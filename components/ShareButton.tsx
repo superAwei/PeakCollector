@@ -517,7 +517,7 @@ export default function ShareButton({
 
                 {/* 下載按鈕（所有裝置） */}
                 <button
-                  onClick={handleDownload}
+                  onClick={() => handleDownload('button')}
                   className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium flex items-center gap-2"
                 >
                   <Download className="w-4 h-4" />
