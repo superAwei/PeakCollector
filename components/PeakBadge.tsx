@@ -20,6 +20,7 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
   const [showDetails, setShowDetails] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [record, setRecord] = useState<CompletedPeak | undefined>(undefined);
+  const [showHoverCard, setShowHoverCard] = useState(false);
 
   // 取得徽章樣式
   const badgeStyle = getBadgeStyle(peak);
@@ -90,20 +91,20 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
         {/* 圓形徽章容器 */}
         <div
           className={`
-            relative transition-all duration-300 transform
+            relative transition-all duration-300 transform cursor-pointer
             ${isCompleted
-              ? 'shadow-lg hover:scale-110 cursor-pointer'
+              ? 'shadow-lg hover:scale-110'
               : 'hover:scale-105'
             }
             ${isNewlyCompleted ? 'animate-bounce' : ''}
           `}
           onClick={() => {
-            if (isCompleted) {
-              // 追蹤查看百岳詳情事件
-              trackViewPeakDetails(peak.id, peak.name);
-              setShowDetails(true);
-            }
+            // 追蹤查看百岳詳情事件
+            trackViewPeakDetails(peak.id, peak.name);
+            setShowDetails(true);
           }}
+          onMouseEnter={() => setShowHoverCard(true)}
+          onMouseLeave={() => setShowHoverCard(false)}
         >
           {/* 手動標記的圓形光暈效果 */}
           {isManual && (
@@ -165,6 +166,27 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
                 ✓ 標記
               </span>
             </button>
+          )}
+
+          {/* Desktop Hover Card - 僅在電腦版顯示 */}
+          {showHoverCard && peak.description && (
+            <div className="hidden md:block absolute left-full top-0 ml-4 w-72 z-50 pointer-events-none">
+              <div className="bg-white rounded-lg shadow-2xl border-2 border-emerald-500 p-4">
+                <h4 className="font-bold text-lg text-gray-900 mb-2">{peak.name}</h4>
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {peak.tags?.map((tag, index) => (
+                    <span key={index} className="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-semibold">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed mb-2">{peak.description}</p>
+                <div className="text-xs text-gray-500">
+                  <div>海拔：{peak.altitude.toLocaleString()}m</div>
+                  {peak.range && <div>山脈：{peak.range}</div>}
+                </div>
+              </div>
+            </div>
           )}
         </div>
 
@@ -244,69 +266,100 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
         </div>
       </Modal>
 
-      {/* 完成記錄詳情對話框 */}
+      {/* 百岳詳情對話框 - 支援所有山峰 */}
       <Modal
         isOpen={showDetails}
         onClose={() => setShowDetails(false)}
-        title={`${peak.name} 完成記錄`}
+        title={peak.name}
       >
-        {record && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-gray-500">山峰名稱</p>
-                <p className="font-semibold text-gray-900">{peak.name}</p>
-              </div>
-              <div>
-                <p className="text-gray-500">海拔高度</p>
-                <p className="font-semibold text-gray-900">{peak.altitude.toLocaleString()}m</p>
-              </div>
-              <div>
-                <p className="text-gray-500">所屬山脈</p>
-                <p className="font-semibold text-gray-900">{peak.range || '未知'}</p>
-              </div>
-              <div>
-                <p className="text-gray-500">完成日期</p>
-                <p className="font-semibold text-gray-900">
-                  {new Date(record.completedAt).toLocaleString('zh-TW', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </p>
-              </div>
-              <div className="col-span-2">
-                <p className="text-gray-500">驗證方式</p>
-                <p className="font-semibold text-gray-900">
-                  {record.verificationMethod === 'manual' ? '手動標記' : 'GPX 自動驗證'}
-                </p>
-              </div>
-              {record.gpxFileName && (
-                <div className="col-span-2">
-                  <p className="text-gray-500">GPX 檔名</p>
-                  <p className="font-semibold text-gray-900 break-all">{record.gpxFileName}</p>
-                </div>
-              )}
+        <div className="space-y-4">
+          {/* 特殊標籤 */}
+          {peak.tags && peak.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {peak.tags.map((tag, index) => (
+                <span key={index} className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full font-semibold text-sm">
+                  {tag}
+                </span>
+              ))}
             </div>
+          )}
 
-            <div className="flex gap-3 justify-end pt-4 border-t">
+          {/* 山峰簡介 */}
+          {peak.description && (
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-gray-700 leading-relaxed">{peak.description}</p>
+            </div>
+          )}
+
+          {/* 基本資訊 */}
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="text-gray-500">排名</p>
+              <p className="font-semibold text-gray-900">#{peak.id}</p>
+            </div>
+            <div>
+              <p className="text-gray-500">海拔高度</p>
+              <p className="font-semibold text-gray-900">{peak.altitude.toLocaleString()}m</p>
+            </div>
+            <div className="col-span-2">
+              <p className="text-gray-500">所屬山脈</p>
+              <p className="font-semibold text-gray-900">{peak.range || '未知'}</p>
+            </div>
+          </div>
+
+          {/* 完成記錄（僅已完成的山峰顯示） */}
+          {record && (
+            <>
+              <div className="border-t pt-4">
+                <h4 className="font-semibold text-gray-900 mb-3">完成記錄</h4>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-500">完成日期</p>
+                    <p className="font-semibold text-gray-900">
+                      {new Date(record.completedAt).toLocaleString('zh-TW', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">驗證方式</p>
+                    <p className="font-semibold text-gray-900">
+                      {record.verificationMethod === 'manual' ? '手動標記' : 'GPX 自動驗證'}
+                    </p>
+                  </div>
+                  {record.gpxFileName && (
+                    <div className="col-span-2">
+                      <p className="text-gray-500">GPX 檔名</p>
+                      <p className="font-semibold text-gray-900 break-all">{record.gpxFileName}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* 操作按鈕 */}
+          <div className="flex gap-3 justify-end pt-4 border-t">
+            {record && (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
               >
-                刪除此記錄
+                刪除記錄
               </button>
-              <button
-                onClick={() => setShowDetails(false)}
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors font-medium"
-              >
-                關閉
-              </button>
-            </div>
+            )}
+            <button
+              onClick={() => setShowDetails(false)}
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors font-medium"
+            >
+              關閉
+            </button>
           </div>
-        )}
+        </div>
       </Modal>
 
       {/* 刪除確認對話框 */}
