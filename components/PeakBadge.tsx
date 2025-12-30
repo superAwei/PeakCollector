@@ -87,7 +87,7 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
 
   return (
     <>
-      <div className="flex flex-col items-center">
+      <div className={`flex flex-col items-center relative ${showHoverCard ? 'z-[100]' : 'z-0'}`}>
         {/* 圓形徽章容器 */}
         <div
           className={`
@@ -170,7 +170,7 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
 
           {/* Desktop Hover Card - 僅在電腦版顯示 */}
           {showHoverCard && peak.description && (
-            <div className="hidden md:block absolute left-full top-0 ml-4 w-72 z-50 pointer-events-none">
+            <div className="hidden md:block absolute left-full top-0 ml-4 w-72 z-[110] pointer-events-none">
               <div className="bg-white rounded-lg shadow-2xl border-2 border-emerald-500 p-4">
                 <h4 className="font-bold text-lg text-gray-900 mb-2">{peak.name}</h4>
                 <div className="flex flex-wrap gap-1 mb-2">
