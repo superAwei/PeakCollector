@@ -170,7 +170,7 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
 
           {/* Desktop Hover Card - 僅在電腦版顯示 */}
           {showHoverCard && peak.description && (
-            <div className="hidden md:block absolute left-full top-0 ml-4 w-72 z-[110] pointer-events-none">
+            <div className="hidden md:block absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 max-w-[90vw] z-[110] pointer-events-none">
               <div className="bg-white rounded-lg shadow-2xl border-2 border-emerald-500 p-4">
                 <h4 className="font-bold text-lg text-gray-900 mb-2">{peak.name}</h4>
                 <div className="flex flex-wrap gap-1 mb-2">
@@ -184,6 +184,10 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
                 <div className="text-xs text-gray-500">
                   <div>海拔：{peak.altitude.toLocaleString()}m</div>
                   {peak.range && <div>山脈：{peak.range}</div>}
+                </div>
+                {/* 三角形箭頭指向徽章 */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px]">
+                  <div className="w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-emerald-500"></div>
                 </div>
               </div>
             </div>
