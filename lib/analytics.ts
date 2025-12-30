@@ -183,6 +183,42 @@ export function trackGenerateShareImage(username: string, imageType: string) {
   });
 }
 
+/**
+ * 追蹤使用 Web Share API 分享海報
+ */
+export function trackSharePoster(
+  username: string,
+  method: 'web_share_api' | 'fallback_download'
+) {
+  sendEvent('share_poster', {
+    username,
+    share_method: method,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+/**
+ * 追蹤下載海報
+ */
+export function trackDownloadPoster(username: string, trigger: 'button' | 'fallback') {
+  sendEvent('download_poster', {
+    username,
+    download_trigger: trigger,
+    timestamp: new Date().toISOString(),
+  });
+}
+
+/**
+ * 追蹤分享功能失敗（例如使用者取消）
+ */
+export function trackSharePosterFail(username: string, reason: string) {
+  sendEvent('share_poster_fail', {
+    username,
+    fail_reason: reason,
+    timestamp: new Date().toISOString(),
+  });
+}
+
 // ==================== 其他事件 ====================
 
 /**
