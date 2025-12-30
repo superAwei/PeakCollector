@@ -9,10 +9,11 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import type { Profile } from '@/lib/types';
 import { trackGenerateShareImage } from '@/lib/analytics';
 import Modal from './Modal';
+import { Share2, Download } from 'lucide-react';
 
 interface ShareButtonProps {
   profile: Profile;
@@ -30,7 +31,20 @@ export default function ShareButton({
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedBlob, setGeneratedBlob] = useState<Blob | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 偵測裝置類型（同步執行）
+  const isMobile = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  }, []);
+
+  // 偵測是否支援 Web Share API
+  const isShareSupported = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return navigator.share !== undefined && navigator.canShare !== undefined;
+  }, []);
 
   // 處理照片上傳
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -234,25 +248,89 @@ export default function ShareButton({
         });
       }
 
-      // 下載圖片
-      const link = document.createElement('a');
-      link.download = `peak-collector-${profile.username}-${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png', 0.95);
-      link.click();
-
-      setIsGenerating(false);
-      setShowUploadModal(false);
-      setUploadedImage(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-
-      // 顯示成功提示
-      alert('✅ 成就海報已下載！');
+      // 生成 Blob（改用 toBlob 而非 toDataURL，更有效率且支援 Web Share API）
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            setGeneratedBlob(blob);
+            setIsGenerating(false);
+          } else {
+            throw new Error('生成 Blob 失敗');
+          }
+        },
+        'image/png',
+        0.95
+      );
     } catch (error) {
       console.error('生成海報失敗:', error);
       alert('❌ 生成失敗，請稍後再試');
       setIsGenerating(false);
+    }
+  };
+
+  // 分享圖片（Web Share API）
+  const handleShare = async () => {
+    if (!generatedBlob) return;
+
+    try {
+      const filename = `peakcollector-${profile.username}-${Date.now()}.png`;
+      const file = new File([generatedBlob], filename, { type: 'image/png' });
+
+      // 檢查是否可以分享檔案
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'PeakCollector 成就海報',
+          text: `我的台灣百岳收集進度：${completedCount}/${totalCount} 座 🏔️`,
+        });
+
+        // 分享成功，清理並關閉
+        setShowUploadModal(false);
+        setUploadedImage(null);
+        setGeneratedBlob(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      } else {
+        // 不支援分享檔案，降級為下載
+        handleDownload();
+      }
+    } catch (error: any) {
+      // 使用者取消分享不算錯誤
+      if (error.name === 'AbortError') {
+        console.log('使用者取消分享');
+      } else {
+        console.error('分享失敗:', error);
+        alert('❌ 分享失敗，請改用下載功能');
+      }
+    }
+  };
+
+  // 下載圖片
+  const handleDownload = () => {
+    if (!generatedBlob) return;
+
+    try {
+      const filename = `peakcollector-${profile.username}-${Date.now()}.png`;
+      const url = URL.createObjectURL(generatedBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      // 下載成功，清理並關閉
+      setShowUploadModal(false);
+      setUploadedImage(null);
+      setGeneratedBlob(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+
+      alert('✅ 成就海報已下載！');
+    } catch (error) {
+      console.error('下載失敗:', error);
+      alert('❌ 下載失敗，請重試');
     }
   };
 
@@ -336,41 +414,100 @@ export default function ShareButton({
           </div>
 
           {/* 預設背景說明 */}
-          {!uploadedImage && (
+          {!uploadedImage && !generatedBlob && (
             <p className="text-xs text-gray-500 text-center">
               💡 未上傳照片時，將使用 PeakCollector 預設漸層背景
             </p>
           )}
 
+          {/* 成功生成後的提示 */}
+          {generatedBlob && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+              <p className="text-sm font-semibold text-emerald-900 mb-2">
+                ✅ 海報生成成功！
+              </p>
+              {isMobile && isShareSupported ? (
+                <p className="text-xs text-emerald-800 leading-relaxed">
+                  💡 <strong>手機使用者</strong>：點擊「儲存/分享」後，選擇<strong>「儲存圖片」</strong>即可將海報存到相簿 📸
+                </p>
+              ) : (
+                <p className="text-xs text-emerald-800 leading-relaxed">
+                  💡 點擊「下載圖片」後，海報將自動儲存到您的下載資料夾
+                </p>
+              )}
+            </div>
+          )}
+
           {/* 操作按鈕 */}
           <div className="flex gap-3 justify-end pt-4 border-t">
-            <button
-              onClick={() => {
-                setShowUploadModal(false);
-                setUploadedImage(null);
-              }}
-              className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              disabled={isGenerating}
-            >
-              取消
-            </button>
-            <button
-              onClick={handleGeneratePoster}
-              disabled={isGenerating}
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {isGenerating ? (
-                <>
-                  <span className="animate-spin">⏳</span>
-                  生成中...
-                </>
-              ) : (
-                <>
-                  <span>📥</span>
-                  生成海報
-                </>
-              )}
-            </button>
+            {!generatedBlob ? (
+              // 未生成時：顯示「取消」和「生成海報」
+              <>
+                <button
+                  onClick={() => {
+                    setShowUploadModal(false);
+                    setUploadedImage(null);
+                  }}
+                  className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  disabled={isGenerating}
+                >
+                  取消
+                </button>
+                <button
+                  onClick={handleGeneratePoster}
+                  disabled={isGenerating}
+                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {isGenerating ? (
+                    <>
+                      <span className="animate-spin">⏳</span>
+                      生成中...
+                    </>
+                  ) : (
+                    <>
+                      <span>📥</span>
+                      生成海報
+                    </>
+                  )}
+                </button>
+              </>
+            ) : (
+              // 已生成時：顯示「重新生成」、「分享」和「下載」
+              <>
+                <button
+                  onClick={() => {
+                    setGeneratedBlob(null);
+                    setUploadedImage(null);
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = '';
+                    }
+                  }}
+                  className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  重新生成
+                </button>
+
+                {/* 手機且支援 Web Share：優先顯示分享按鈕 */}
+                {isMobile && isShareSupported && (
+                  <button
+                    onClick={handleShare}
+                    className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium flex items-center gap-2"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    儲存/分享
+                  </button>
+                )}
+
+                {/* 下載按鈕（所有裝置） */}
+                <button
+                  onClick={handleDownload}
+                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  下載圖片
+                </button>
+              </>
+            )}
           </div>
         </div>
       </Modal>
