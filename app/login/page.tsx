@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase/client';
@@ -22,16 +22,10 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isInApp, setIsInApp] = useState(false);
-  const [os, setOS] = useState<'ios' | 'android' | 'other'>('other');
 
-  // 檢測是否在社群 App 內建瀏覽器中
-  useEffect(() => {
-    const inApp = isInAppBrowser();
-    const userOS = getOS();
-    setIsInApp(inApp);
-    setOS(userOS);
-  }, []);
+  // 立即執行偵測（同步，不是在 useEffect 中）避免競態條件
+  const isInApp = useMemo(() => isInAppBrowser(), []);
+  const os = useMemo(() => getOS(), []);
 
   // 檢查 URL 中的錯誤參數
   useEffect(() => {

@@ -8,25 +8,17 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { isInAppBrowser, getOS, getCurrentUrl } from '@/lib/browser-detection';
 import { ExternalLink, AlertCircle, Copy, Check } from 'lucide-react';
 
 export default function OpenInBrowserPrompt() {
-  const [isInApp, setIsInApp] = useState(false);
-  const [os, setOS] = useState<'ios' | 'android' | 'other'>('other');
+  // 立即執行偵測（同步，不是在 useEffect 中）避免競態條件
+  const isInApp = useMemo(() => isInAppBrowser(), []);
+  const os = useMemo(() => getOS(), []);
+  const currentUrl = useMemo(() => getCurrentUrl(), []);
+
   const [copied, setCopied] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState('');
-
-  useEffect(() => {
-    const inApp = isInAppBrowser();
-    const userOS = getOS();
-    const url = getCurrentUrl();
-
-    setIsInApp(inApp);
-    setOS(userOS);
-    setCurrentUrl(url);
-  }, []);
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(currentUrl);
