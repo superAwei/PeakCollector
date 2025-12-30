@@ -171,10 +171,10 @@ export default async function PublicProfilePage({ params }: PageProps) {
         <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 sm:mb-2">分享我的成就</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 sm:mb-2">匯出成就海報</h3>
               <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                將百岳收集進度分享給朋友
-                <span className="hidden sm:inline">，或匯出精美的成就報告</span>
+                下載精美的成就海報
+                <span className="hidden sm:inline">，與朋友分享你的百岳征途</span>
               </p>
             </div>
             <div className="flex-shrink-0 self-end sm:self-auto">

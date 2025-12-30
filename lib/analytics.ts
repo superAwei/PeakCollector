@@ -150,9 +150,12 @@ export function trackViewPublicProfile(username: string) {
   });
 }
 
-/**
- * 追蹤複製主頁連結
- */
+// ============================================
+// 以下追蹤函式已停用（分享功能簡化後不再使用）
+// ============================================
+
+/*
+// 追蹤複製主頁連結 - 已停用
 export function trackCopyProfileLink(username: string) {
   sendEvent('copy_profile_link', {
     username,
@@ -160,15 +163,14 @@ export function trackCopyProfileLink(username: string) {
   });
 }
 
-/**
- * 追蹤下載 QR Code
- */
+// 追蹤下載 QR Code - 已停用
 export function trackDownloadQRCode(username: string) {
   sendEvent('download_qr_code', {
     username,
     share_method: 'qr_code',
   });
 }
+*/
 
 /**
  * 追蹤生成分享圖片
