@@ -35,24 +35,24 @@ export default function FirstTimeNotice() {
             <div className="flex items-start gap-2">
               <span className="text-green-600 font-bold">⭐⭐⭐⭐</span>
               <div>
-                <span className="font-semibold">前10座（玉山、雪山等）</span>
-                <p className="text-gray-600">PeakVisor 官方資料，驗證可靠</p>
+                <span className="font-semibold text-gray-900">前10座（玉山、雪山等）</span>
+                <p className="text-gray-700">PeakVisor 官方資料，驗證可靠</p>
               </div>
             </div>
 
             <div className="flex items-start gap-2">
               <span className="text-yellow-600 font-bold">⭐⭐⭐</span>
               <div>
-                <span className="font-semibold">第11-20座</span>
-                <p className="text-gray-600">參考資料，可能有小誤差</p>
+                <span className="font-semibold text-gray-900">第11-20座</span>
+                <p className="text-gray-700">參考資料，可能有小誤差</p>
               </div>
             </div>
 
             <div className="flex items-start gap-2">
               <span className="text-orange-600 font-bold">⭐⭐</span>
               <div>
-                <span className="font-semibold">第21-100座</span>
-                <p className="text-gray-600">估計值，建議使用手動標記</p>
+                <span className="font-semibold text-gray-900">第21-100座</span>
+                <p className="text-gray-700">估計值，建議使用手動標記</p>
               </div>
             </div>
           </div>
