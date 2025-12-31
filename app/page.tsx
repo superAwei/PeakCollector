@@ -1,28 +1,41 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ProgressStats from '@/components/ProgressStats';
 import PeakBadge from '@/components/PeakBadge';
 import GPXUploader from '@/components/GPXUploader';
-import UsageGuide from '@/components/UsageGuide';
 import FirstTimeNotice from '@/components/FirstTimeNotice';
 import UserMenu from '@/components/UserMenu';
 import { useAuth } from '@/components/AuthProvider';
 import { PEAKS, DEMO_PEAKS_COUNT } from '@/lib/peaks-data';
-import { getCompletedPeakIds, clearCompletedPeaks } from '@/lib/storage';
+import { getCompletedPeakIds, getCompletedPeaks, clearCompletedPeaks } from '@/lib/storage';
 import { getCurrentUserProfile } from '@/lib/profile';
-import { trackResetProgress, trackViewAbout, trackReportIssue } from '@/lib/analytics';
+import { trackResetProgress, trackViewAbout, trackReportIssue, trackViewPeakDetails } from '@/lib/analytics';
+import type { CompletedPeak, Profile } from '@/lib/types';
+
+// 導入新的首頁組件
+import ProgressCard from '@/components/HomePage/ProgressCard';
+import QuickActions from '@/components/HomePage/QuickActions';
+import RecentAchievements from '@/components/HomePage/RecentAchievements';
+import CollapsibleTutorial from '@/components/HomePage/CollapsibleTutorial';
 
 export default function Home() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const [completedPeakIds, setCompletedPeakIds] = useState<number[]>([]);
+  const [completedPeaks, setCompletedPeaks] = useState<CompletedPeak[]>([]);
   const [newlyCompletedIds, setNewlyCompletedIds] = useState<number[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [hasTempUsername, setHasTempUsername] = useState(false);
   const [showProfileBanner, setShowProfileBanner] = useState(false);
+  const [userProfile, setUserProfile] = useState<Profile | null>(null);
+  const [selectedPeakId, setSelectedPeakId] = useState<number | null>(null);
+
+  // Refs for scrolling
+  const gpxUploaderRef = useRef<HTMLDivElement>(null);
+  const badgeWallRef = useRef<HTMLDivElement>(null);
 
   // 檢查登入狀態
   useEffect(() => {
@@ -32,22 +45,28 @@ export default function Home() {
     }
   }, [user, loading, router]);
 
-  // 載入已完成的百岳記錄
+  // 載入已完成的百岳記錄和使用者資料
   useEffect(() => {
-    async function loadCompletedPeaks() {
+    async function loadData() {
       if (user) {
         try {
-          const ids = await getCompletedPeakIds();
-          setCompletedPeakIds(ids);
+          // 載入完整的完成記錄（包含日期）
+          const peaks = await getCompletedPeaks();
+          setCompletedPeaks(peaks);
+          setCompletedPeakIds(peaks.map(p => p.peakId));
+
+          // 載入使用者資料
+          const profile = await getCurrentUserProfile();
+          setUserProfile(profile);
         } catch (error) {
-          console.error('載入完成記錄失敗:', error);
+          console.error('載入資料失敗:', error);
         } finally {
           setIsLoadingData(false);
         }
       }
     }
 
-    loadCompletedPeaks();
+    loadData();
   }, [user]);
 
   // 檢查是否有臨時 username
@@ -126,12 +145,43 @@ export default function Home() {
   // 刷新已完成列表（用於手動標記和刪除記錄後）
   const handleUpdate = async () => {
     try {
-      const ids = await getCompletedPeakIds();
-      setCompletedPeakIds(ids);
+      const peaks = await getCompletedPeaks();
+      setCompletedPeaks(peaks);
+      setCompletedPeakIds(peaks.map(p => p.peakId));
       setNewlyCompletedIds([]); // 清除 NEW 標記
     } catch (error) {
       console.error('重新載入完成記錄失敗:', error);
     }
+  };
+
+  // Dashboard 處理函數
+  const handleUploadGPX = () => {
+    gpxUploaderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleViewMap = () => {
+    badgeWallRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleExportPoster = () => {
+    // 導航到個人主頁，在那裡可以使用完整的匯出功能
+    if (userProfile?.username) {
+      router.push(`/${userProfile.username}`);
+    } else {
+      // 如果沒有設定 username，導航到設定頁面
+      router.push('/profile/edit');
+    }
+  };
+
+  const handleViewPeakDetails = (peakId: number) => {
+    setSelectedPeakId(peakId);
+    trackViewPeakDetails(peakId, PEAKS.find(p => p.id === peakId)?.name || '');
+    // 可以在這裡打開詳情 modal 或導航到詳情頁
+    badgeWallRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleViewAll = () => {
+    badgeWallRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   // Loading 狀態
@@ -159,6 +209,22 @@ export default function Home() {
   if (!user) {
     return null;
   }
+
+  // 準備最近完成的百岳資料（最多5座，按完成時間倒序）
+  const recentPeaks = completedPeaks
+    .slice(0, 5)
+    .map(record => {
+      const peak = PEAKS.find(p => p.id === record.peakId);
+      return {
+        id: record.peakId,
+        name: peak?.name || '未知',
+        elevation: peak?.altitude || 0,
+        completedDate: record.completedAt,
+      };
+    });
+
+  // 計算進度百分比
+  const progress = Math.round((completedPeakIds.length / DEMO_PEAKS_COUNT) * 100);
 
   return (
     <>
@@ -267,51 +333,66 @@ export default function Home() {
           </div>
         )}
 
-        {/* 左右分欄佈局 */}
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-          {/* 左側：GPX 上傳區域 (40%) */}
-          <div className="w-full lg:w-[40%] flex flex-col gap-4 sm:gap-6">
-            {/* 使用說明（上方） */}
-            <UsageGuide />
+        {/* 成就儀表板區域 */}
+        <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
+          {/* 進度卡片 */}
+          <ProgressCard
+            completed={completedPeakIds.length}
+            total={DEMO_PEAKS_COUNT}
+            onExportPoster={handleExportPoster}
+          />
 
-            {/* GPX 上傳 */}
-            <GPXUploader onPeaksVerified={handlePeaksVerified} />
+          {/* 快速操作 */}
+          <QuickActions
+            onUploadGPX={handleUploadGPX}
+            onViewMap={handleViewMap}
+            onExportPoster={handleExportPoster}
+          />
+
+          {/* 最近成就 */}
+          <RecentAchievements
+            recentPeaks={recentPeaks}
+            onViewDetails={handleViewPeakDetails}
+            onViewAll={handleViewAll}
+          />
+
+          {/* 使用說明（可摺疊） */}
+          <CollapsibleTutorial />
+        </div>
+
+        {/* GPX 上傳區域 */}
+        <div ref={gpxUploaderRef} className="mb-6 sm:mb-8">
+          <GPXUploader onPeaksVerified={handlePeaksVerified} />
+        </div>
+
+        {/* 提示訊息 */}
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-3 sm:p-4 rounded mb-6 sm:mb-8">
+          <p className="text-xs sm:text-sm text-blue-900 leading-relaxed">
+            <span className="font-semibold">💡 提示：</span>
+            GPX 驗證失敗？試試<span className="font-medium">「手動標記」</span>功能！
+            <span className="hidden sm:inline">點擊徽章上的「✓ 手動標記」按鈕即可。</span>
+          </p>
+        </div>
+
+        {/* 百岳徽章牆 */}
+        <div ref={badgeWallRef} className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">百岳徽章牆</h2>
+            <div className="text-xs sm:text-sm text-gray-600">
+              完整版本：{DEMO_PEAKS_COUNT} 座百岳
+            </div>
           </div>
 
-          {/* 右側：進度統計 + 百岳徽章牆 (60%) */}
-          <div className="w-full lg:w-[60%] flex flex-col gap-4 sm:gap-6">
-            {/* Progress Stats */}
-            <ProgressStats completed={completedPeakIds.length} total={DEMO_PEAKS_COUNT} />
-
-            {/* 提示訊息 */}
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-3 sm:p-4 rounded">
-              <p className="text-xs sm:text-sm text-blue-900 leading-relaxed">
-                <span className="font-semibold">💡 提示：</span>
-                GPX 驗證失敗？試試<span className="font-medium">「手動標記」</span>功能！
-                <span className="hidden sm:inline">點擊徽章上的「✓ 手動標記」按鈕即可。</span>
-              </p>
-            </div>
-
-            {/* Peaks Grid */}
-            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-800">百岳徽章牆</h2>
-                <div className="text-xs sm:text-sm text-gray-600">
-                  完整版本：{DEMO_PEAKS_COUNT} 座百岳
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-                {PEAKS.map((peak) => (
-                  <PeakBadge
-                    key={peak.id}
-                    peak={peak}
-                    isCompleted={completedPeakIds.includes(peak.id)}
-                    isNewlyCompleted={newlyCompletedIds.includes(peak.id)}
-                    onUpdate={handleUpdate}
-                  />
-                ))}
-              </div>            </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+            {PEAKS.map((peak) => (
+              <PeakBadge
+                key={peak.id}
+                peak={peak}
+                isCompleted={completedPeakIds.includes(peak.id)}
+                isNewlyCompleted={newlyCompletedIds.includes(peak.id)}
+                onUpdate={handleUpdate}
+              />
+            ))}
           </div>
         </div>
 
