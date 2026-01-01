@@ -10,32 +10,24 @@ import FirstTimeNotice from '@/components/FirstTimeNotice';
 import UserMenu from '@/components/UserMenu';
 import { useAuth } from '@/components/AuthProvider';
 import { PEAKS, DEMO_PEAKS_COUNT } from '@/lib/peaks-data';
-import { getCompletedPeakIds, getCompletedPeaks, clearCompletedPeaks } from '@/lib/storage';
+import { getCompletedPeakIds, clearCompletedPeaks } from '@/lib/storage';
 import { getCurrentUserProfile } from '@/lib/profile';
-import { trackResetProgress, trackViewAbout, trackReportIssue, trackViewPeakDetails } from '@/lib/analytics';
-import type { CompletedPeak, Profile } from '@/lib/types';
+import { trackResetProgress, trackViewAbout, trackReportIssue } from '@/lib/analytics';
+import type { Profile } from '@/lib/types';
 
 // 導入新的首頁組件
 import ProgressCard from '@/components/HomePage/ProgressCard';
-import QuickActions from '@/components/HomePage/QuickActions';
-import RecentAchievements from '@/components/HomePage/RecentAchievements';
 import CollapsibleTutorial from '@/components/HomePage/CollapsibleTutorial';
 
 export default function Home() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const [completedPeakIds, setCompletedPeakIds] = useState<number[]>([]);
-  const [completedPeaks, setCompletedPeaks] = useState<CompletedPeak[]>([]);
   const [newlyCompletedIds, setNewlyCompletedIds] = useState<number[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [hasTempUsername, setHasTempUsername] = useState(false);
   const [showProfileBanner, setShowProfileBanner] = useState(false);
   const [userProfile, setUserProfile] = useState<Profile | null>(null);
-  const [selectedPeakId, setSelectedPeakId] = useState<number | null>(null);
-
-  // Refs for scrolling
-  const gpxUploaderRef = useRef<HTMLDivElement>(null);
-  const badgeWallRef = useRef<HTMLDivElement>(null);
 
   // 檢查登入狀態
   useEffect(() => {
@@ -50,10 +42,9 @@ export default function Home() {
     async function loadData() {
       if (user) {
         try {
-          // 載入完整的完成記錄（包含日期）
-          const peaks = await getCompletedPeaks();
-          setCompletedPeaks(peaks);
-          setCompletedPeakIds(peaks.map(p => p.peakId));
+          // 載入完成記錄
+          const ids = await getCompletedPeakIds();
+          setCompletedPeakIds(ids);
 
           // 載入使用者資料
           const profile = await getCurrentUserProfile();
@@ -145,24 +136,15 @@ export default function Home() {
   // 刷新已完成列表（用於手動標記和刪除記錄後）
   const handleUpdate = async () => {
     try {
-      const peaks = await getCompletedPeaks();
-      setCompletedPeaks(peaks);
-      setCompletedPeakIds(peaks.map(p => p.peakId));
+      const ids = await getCompletedPeakIds();
+      setCompletedPeakIds(ids);
       setNewlyCompletedIds([]); // 清除 NEW 標記
     } catch (error) {
       console.error('重新載入完成記錄失敗:', error);
     }
   };
 
-  // Dashboard 處理函數
-  const handleUploadGPX = () => {
-    gpxUploaderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const handleViewMap = () => {
-    badgeWallRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
+  // 匯出海報處理函數
   const handleExportPoster = () => {
     // 導航到個人主頁，在那裡可以使用完整的匯出功能
     if (userProfile?.username) {
@@ -171,17 +153,6 @@ export default function Home() {
       // 如果沒有設定 username，導航到設定頁面
       router.push('/profile/edit');
     }
-  };
-
-  const handleViewPeakDetails = (peakId: number) => {
-    setSelectedPeakId(peakId);
-    trackViewPeakDetails(peakId, PEAKS.find(p => p.id === peakId)?.name || '');
-    // 可以在這裡打開詳情 modal 或導航到詳情頁
-    badgeWallRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const handleViewAll = () => {
-    badgeWallRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   // Loading 狀態
@@ -209,22 +180,6 @@ export default function Home() {
   if (!user) {
     return null;
   }
-
-  // 準備最近完成的百岳資料（最多5座，按完成時間倒序）
-  const recentPeaks = completedPeaks
-    .slice(0, 5)
-    .map(record => {
-      const peak = PEAKS.find(p => p.id === record.peakId);
-      return {
-        id: record.peakId,
-        name: peak?.name || '未知',
-        elevation: peak?.altitude || 0,
-        completedDate: record.completedAt,
-      };
-    });
-
-  // 計算進度百分比
-  const progress = Math.round((completedPeakIds.length / DEMO_PEAKS_COUNT) * 100);
 
   return (
     <>
@@ -342,26 +297,12 @@ export default function Home() {
             onExportPoster={handleExportPoster}
           />
 
-          {/* 快速操作 */}
-          <QuickActions
-            onUploadGPX={handleUploadGPX}
-            onViewMap={handleViewMap}
-            onExportPoster={handleExportPoster}
-          />
-
-          {/* 最近成就 */}
-          <RecentAchievements
-            recentPeaks={recentPeaks}
-            onViewDetails={handleViewPeakDetails}
-            onViewAll={handleViewAll}
-          />
-
           {/* 使用說明（可摺疊） */}
           <CollapsibleTutorial />
         </div>
 
         {/* GPX 上傳區域 */}
-        <div ref={gpxUploaderRef} className="mb-6 sm:mb-8">
+        <div className="mb-6 sm:mb-8">
           <GPXUploader onPeaksVerified={handlePeaksVerified} />
         </div>
 
@@ -375,7 +316,7 @@ export default function Home() {
         </div>
 
         {/* 百岳徽章牆 */}
-        <div ref={badgeWallRef} className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800">百岳徽章牆</h2>
             <div className="text-xs sm:text-sm text-gray-600">
