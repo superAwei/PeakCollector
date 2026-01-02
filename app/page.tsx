@@ -197,9 +197,9 @@ export default function Home() {
                 <Image
                   src="/weblogo.png"
                   alt="PeakCollector Logo"
-                  width={48}
-                  height={48}
-                  className="w-10 h-10 sm:w-12 sm:h-12"
+                  width={64}
+                  height={64}
+                  className="w-12 h-12 md:w-16 md:h-16"
                   priority
                 />
               </div>

@@ -60,13 +60,13 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
       `}
     >
       {/* LOGO 容器 */}
-      <div className="relative w-48 h-48 mb-6">
+      <div className="relative w-80 h-80 mb-6">
         {/* 灰色底層（未填充） */}
         <Image
           src="/weblogo.png"
           alt="PeakCollector Logo"
-          width={192}
-          height={192}
+          width={320}
+          height={320}
           className="absolute inset-0 opacity-30 grayscale"
           priority
         />
@@ -81,8 +81,8 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
           <Image
             src="/weblogo.png"
             alt="PeakCollector Logo"
-            width={192}
-            height={192}
+            width={320}
+            height={320}
             className="absolute inset-0"
             priority
           />

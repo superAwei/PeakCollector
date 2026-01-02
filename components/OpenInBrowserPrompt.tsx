@@ -8,17 +8,26 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { isInAppBrowser, getOS, getCurrentUrl } from '@/lib/browser-detection';
 import { ExternalLink, AlertCircle, Copy, Check } from 'lucide-react';
 
 export default function OpenInBrowserPrompt() {
-  // 立即執行偵測（同步，不是在 useEffect 中）避免競態條件
-  const isInApp = useMemo(() => isInAppBrowser(), []);
-  const os = useMemo(() => getOS(), []);
-  const currentUrl = useMemo(() => getCurrentUrl(), []);
+  // 使用 state 儲存檢測結果
+  const [isInApp, setIsInApp] = useState(false);
+  const [os, setOs] = useState<'ios' | 'android' | 'other'>('other');
+  const [currentUrl, setCurrentUrl] = useState('');
+  const [mounted, setMounted] = useState(false);
 
   const [copied, setCopied] = useState(false);
+
+  // 只在客戶端掛載後執行檢測，避免 hydration mismatch
+  useEffect(() => {
+    setIsInApp(isInAppBrowser());
+    setOs(getOS());
+    setCurrentUrl(getCurrentUrl());
+    setMounted(true);
+  }, []);
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(currentUrl);
@@ -26,8 +35,8 @@ export default function OpenInBrowserPrompt() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // 不在內建瀏覽器中，不顯示提示
-  if (!isInApp) return null;
+  // 未掛載或不在內建瀏覽器中，不顯示提示
+  if (!mounted || !isInApp) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[300] flex items-center justify-center p-4">

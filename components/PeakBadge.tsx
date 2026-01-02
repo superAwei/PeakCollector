@@ -38,29 +38,42 @@ function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdate }: PeakBadgeP
 
   const isManual = record?.verificationMethod === 'manual';
 
-  // 手動標記
+  // 手動標記（樂觀更新版本）
   const handleManualMark = async () => {
     try {
-      // 先儲存記錄
-      await saveCompletedPeaks([peak.id], undefined, 'manual');
-
-      // 儲存成功後再關閉對話框和更新UI
+      // ✅ Step 1: 立即關閉對話框（給使用者即時回饋）
       setShowManualConfirm(false);
 
-      // 追蹤手動標記事件（不阻塞UI更新）
+      // ✅ Step 2: 立即更新本地 UI（樂觀更新，不等資料庫）
+      onUpdate?.();
+
+      // ✅ Step 3: 追蹤事件（不阻塞）
       try {
         trackManualMarkPeak(peak.id, peak.name);
       } catch (trackError) {
         console.warn('追蹤事件失敗（不影響功能）:', trackError);
       }
 
-      // 最後才更新UI
+      // ✅ Step 4: 背景同步到資料庫（不阻塞 UI）
+      await saveCompletedPeaks([peak.id], undefined, 'manual');
+
+      // ✅ Step 5: 資料庫同步成功後再次更新（確保資料一致性）
       onUpdate?.();
+
     } catch (error) {
       console.error('手動標記失敗:', error);
-      // 保持對話框開啟，讓使用者知道失敗了
+
+      // ❌ 如果資料庫同步失敗，回滾並顯示錯誤
       const errorMessage = error instanceof Error ? error.message : '未知錯誤';
-      alert(`標記失敗：${errorMessage}\n\n請稍後再試或聯絡客服。`);
+
+      // 重新開啟對話框讓使用者重試
+      setShowManualConfirm(true);
+
+      // 顯示錯誤訊息
+      alert(`標記失敗：${errorMessage}\n\n請重新標記或稍後再試。`);
+
+      // 回滾 UI 狀態
+      onUpdate?.();
     }
   };
 
