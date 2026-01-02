@@ -8,6 +8,7 @@ export interface Peak {
   description?: string; // 山岳簡介與特色
   tags?: string[]; // 特殊標籤（五岳、十峻、三尖等）
   coordinateSource?: 'official' | 'peakvisor' | 'reference' | 'estimated'; // 座標資料來源
+  badgeStyle?: 'yushan' | 'xueshan' | 'central-north' | 'central-mid' | 'central-south' | 'qilai' | 'volcano' | 'flower' | 'shengling' | 'ocean' | 'wuling'; // 徽章樣式
 }
 
 // 台灣百岳完整列表（依排名 1-100）
@@ -23,7 +24,8 @@ export const PEAKS: Peak[] = [
     range: '玉山山脈',
     description: '台灣與東北亞第一高峰，五岳之首，台幣 1000 元鈔票背後的主角。',
     tags: ['五岳'],
-    coordinateSource: 'peakvisor'
+    coordinateSource: 'peakvisor',
+    badgeStyle: 'yushan'
   },
   {
     id: 2,
@@ -34,7 +36,8 @@ export const PEAKS: Peak[] = [
     range: '雪山山脈',
     description: '台灣第二高峰，擁有全台最完整的冰河「圈谷」遺跡。',
     tags: ['五岳'],
-    coordinateSource: 'peakvisor'
+    coordinateSource: 'peakvisor',
+    badgeStyle: 'xueshan'
   },
   {
     id: 3,
@@ -45,7 +48,8 @@ export const PEAKS: Peak[] = [
     range: '玉山山脈',
     description: '十峻之首，三面斷崖，地勢險要，登頂需攀爬鐵鍊垂直岩壁。',
     tags: ['十峻'],
-    coordinateSource: 'peakvisor'
+    coordinateSource: 'peakvisor',
+    badgeStyle: 'yushan'
   },
   {
     id: 4,
@@ -55,7 +59,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.95,
     range: '玉山山脈',
     description: '設有全台最高氣象站，是拍攝「玉山主峰」標準角度的地點。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'yushan'
   },
   {
     id: 5,
@@ -66,7 +71,8 @@ export const PEAKS: Peak[] = [
     range: '玉山山脈',
     description: '十峻之一，山體由漆黑的頁岩構成，尖銳如龍角。',
     tags: ['十峻'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'yushan'
   },
   {
     id: 6,
@@ -77,7 +83,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '中央山脈最高峰，五岳之一，山容寬闊氣勢壯麗。',
     tags: ['五岳'],
-    coordinateSource: 'peakvisor'
+    coordinateSource: 'peakvisor',
+    badgeStyle: 'central-mid'
   },
   {
     id: 7,
@@ -88,7 +95,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '十峻之一，馬博橫斷的核心，山勢高聳且極難抵達。',
     tags: ['十峻'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-mid'
   },
   {
     id: 8,
@@ -99,7 +107,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '五岳之一，具有「帝王之山」美譽，冰河圈谷景觀極為壯闊。',
     tags: ['五岳'],
-    coordinateSource: 'peakvisor'
+    coordinateSource: 'peakvisor',
+    badgeStyle: 'ocean'
   },
   {
     id: 9,
@@ -109,7 +118,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.968,
     range: '玉山山脈',
     description: '玉山群峰之一，位於南峰支稜，稜脊由碎石構成，緩起伏。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'yushan'
   },
   {
     id: 10,
@@ -120,7 +130,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '三尖之首，金字塔形尖峰，被譽為「寶島第一尖」。',
     tags: ['三尖'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-north'
   },
   {
     id: 11,
@@ -130,7 +141,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.2383,
     range: '雪山山脈',
     description: '位於聖稜線上，山頂視野極佳，有著名的小木屋（雪北避難小屋）。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'shengling'
   },
   {
     id: 12,
@@ -141,7 +153,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '十峻之一，南中央山脈最高峰，有「南台首岳」之稱。',
     tags: ['十峻'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-south'
   },
   {
     id: 13,
@@ -151,7 +164,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.99,
     range: '中央山脈',
     description: '位於南二段中點，山勢平緩，下方有著名的高山湖泊大水窟池。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-south'
   },
   {
     id: 14,
@@ -161,7 +175,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.4431,
     range: '中央山脈',
     description: '全山為碎石片構成，景觀荒涼奇特，為宜蘭縣最高峰。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'ocean'
   },
   {
     id: 15,
@@ -171,7 +186,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.08,
     range: '中央山脈',
     description: '東郡山彙最高峰，偏遠荒僻，山頂有一等三角點。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-mid'
   },
   {
     id: 16,
@@ -182,7 +198,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '一奇之首，十峻之一，以「黑色奇萊」聞名，山形尖銳險惡。',
     tags: ['十峻'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'qilai'
   },
   {
     id: 17,
@@ -192,7 +209,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.03,
     range: '中央山脈',
     description: '嘉明湖路線必經，有巨大的「向陽大崩壁」，晨曦時呈現金紅色。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'volcano'
   },
   {
     id: 18,
@@ -203,7 +221,8 @@ export const PEAKS: Peak[] = [
     range: '雪山山脈',
     description: '十峻之一，雪山山脈名山，以陡降、缺水、地形艱難著稱。',
     tags: ['十峻'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-north'
   },
   {
     id: 19,
@@ -213,7 +232,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.98,
     range: '中央山脈',
     description: '南二段名峰，山體龐大厚實，山頂視野遼闊。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-south'
   },
   {
     id: 20,
@@ -223,7 +243,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.32,
     range: '中央山脈',
     description: '奇萊連峰之一，雖不如北峰險峻，但依舊保有峻峭的石壁景觀。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'qilai'
   },
 
   // === 21-40 名：聖稜線與四秀精華 ===
@@ -235,7 +256,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.13,
     range: '中央山脈',
     description: '馬博橫斷上的奇峰，山頂巨石林立，形如城堡。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-mid'
   },
   {
     id: 22,
@@ -245,7 +267,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.45,
     range: '中央山脈',
     description: '蘭陽溪發源地，是中央山脈最北端的百岳。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'ocean'
   },
   {
     id: 23,
@@ -255,7 +278,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.15,
     range: '雪山山脈',
     description: '雪山西南稜核心，擁有非常廣闊的高山草原與冷杉林。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'xueshan'
   },
   {
     id: 24,
@@ -266,7 +290,8 @@ export const PEAKS: Peak[] = [
     range: '雪山山脈',
     description: '武陵四秀之首，十峻之一，以驚險的「品田斷崖」聞名。',
     tags: ['十峻', '武陵四秀'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'shengling'
   },
   {
     id: 25,
@@ -276,7 +301,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.94,
     range: '玉山山脈',
     description: '稜線平緩，山頂掩映在冷杉林中，保留有日治時期的山神廟。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'yushan'
   },
   {
     id: 26,
@@ -286,7 +312,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.18,
     range: '雪山山脈',
     description: '山形遠觀酷似頭鷹俯瞰，位於大雪山與大霸尖山之間。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'shengling'
   },
   {
     id: 27,
@@ -296,7 +323,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.03,
     range: '中央山脈',
     description: '台灣最熱門百岳之一，因天使的眼淚「嘉明湖」位於山腳而聞名。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'volcano'
   },
   {
     id: 28,
@@ -307,7 +335,8 @@ export const PEAKS: Peak[] = [
     range: '雪山山脈',
     description: '三尖之一，酒桶狀奇特山形，為泰雅與賽夏族的聖山。',
     tags: ['三尖'],
-    coordinateSource: 'peakvisor'
+    coordinateSource: 'peakvisor',
+    badgeStyle: 'shengling'
   },
   {
     id: 29,
@@ -317,7 +346,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.425,
     range: '中央山脈',
     description: '南湖群峰中最艱難的一座，滿佈亂石與陡坡。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'ocean'
   },
   {
     id: 30,
@@ -327,7 +357,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.0,
     range: '中央山脈',
     description: '東郡山彙名山，擁有極致絕美的短箭竹草原坡。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-mid'
   },
   {
     id: 31,
@@ -338,7 +369,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '十峻之一，位於北二段，以崩塌嚴重的「無明斷崖」著稱。',
     tags: ['十峻'],
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'flower'
   },
   {
     id: 32,
@@ -348,7 +380,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.42,
     range: '中央山脈',
     description: '位於南湖群峰最南端，與南湖南峰緊鄰，地形破碎。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'ocean'
   },
   {
     id: 33,
@@ -358,7 +391,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.12,
     range: '中央山脈',
     description: '位於馬博橫斷與南二段交接處，山形渾圓。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-mid'
   },
   {
     id: 34,
@@ -369,7 +403,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '合歡群峰最高峰，五、六月滿山紅毛杜鵑盛開，路徑清楚親民。',
     tags: ['合歡群峰'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-north'
   },
   {
     id: 35,
@@ -380,7 +415,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '位於合歡山莊旁，山勢陡峭，冬季是絕佳的賞雪勝地。',
     tags: ['合歡群峰'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-north'
   },
   {
     id: 36,
@@ -390,7 +426,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.135,
     range: '雪山山脈',
     description: '緊鄰大霸尖山，山頂狹小奇尖，攀登需極度注意平衡。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'shengling'
   },
   {
     id: 37,
@@ -401,7 +438,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '最容易親近的百岳之一，水泥步道直通山頂。',
     tags: ['合歡群峰'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-north'
   },
   {
     id: 38,
@@ -411,7 +449,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.955,
     range: '玉山山脈',
     description: '玉山群峰最南端，路程遙遠且須穿過漫長的小波浪箭竹海。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'yushan'
   },
   {
     id: 39,
@@ -421,7 +460,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.2,
     range: '中央山脈',
     description: '中橫四辣之一，以連續陡升的「畢祿斷崖」考驗登山者。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-north'
   },
   {
     id: 40,
@@ -431,7 +471,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.08,
     range: '中央山脈',
     description: '干卓萬縱走最高峰，地處偏遠且有無數危險斷崖。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-south'
   },
 
   // === 41-60 名：縱走必經名峰 ===
@@ -443,7 +484,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.28,
     range: '中央山脈',
     description: '屬於能高越嶺古道支線，擁有極大面積的柔美金黃草原。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'qilai'
   },
   {
     id: 42,
@@ -453,7 +495,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.00,
     range: '中央山脈',
     description: '位於南二段，山形有南北兩峰對峙，由此下山可達拉庫音溪。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-south'
   },
   {
     id: 43,
@@ -464,7 +507,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '十峻之一，能高安東軍路線中最險峻的一段。',
     tags: ['十峻'],
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'qilai'
   },
   {
     id: 44,
@@ -474,7 +518,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.20,
     range: '雪山山脈',
     description: '早期攀登雪山的唯一路線，以單日垂直爬升 1700 公尺著稱。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'wuling'
   },
   {
     id: 45,
@@ -484,7 +529,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.05,
     range: '中央山脈',
     description: '十翠之一，中橫四辣之「特辣」，路程遙遠且充滿倒木與亂石。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-north'
   },
   {
     id: 46,
@@ -494,7 +540,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.95,
     range: '中央山脈',
     description: '位於八通關古道上方，山頂為尖銳的石壁，展望極佳。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'volcano'
   },
   {
     id: 47,
@@ -505,7 +552,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '十峻之一，東台第一霸，孤懸於中央山脈東側。',
     tags: ['十峻'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'volcano'
   },
   {
     id: 48,
@@ -515,7 +563,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.05,
     range: '中央山脈',
     description: '位於中央山脈中段，地理位置最深遠、最難到達的山岳之一。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'volcano'
   },
   {
     id: 49,
@@ -526,7 +575,8 @@ export const PEAKS: Peak[] = [
     range: '雪山山脈',
     description: '武陵四秀之一，山形遠觀如蜜桃，山頂視野 360 度無死角。',
     tags: ['武陵四秀'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'wuling'
   },
   {
     id: 50,
@@ -536,7 +586,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.23,
     range: '雪山山脈',
     description: '大小劍線名山，山頭有一片巨大的斜板岩壁，非常有辨識度。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'wuling'
   },
   {
     id: 51,
@@ -546,7 +597,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.17,
     range: '雪山山脈',
     description: '雪山西南稜名峰，山體由黑色焦石堆疊，看似被火燒過。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'xueshan'
   },
   {
     id: 52,
@@ -557,7 +609,8 @@ export const PEAKS: Peak[] = [
     range: '雪山山脈',
     description: '武陵四秀之一，以山徑上的「池有石瀑」與「新達池」聞名。',
     tags: ['武陵四秀'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'wuling'
   },
   {
     id: 53,
@@ -567,7 +620,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.15,
     range: '雪山山脈',
     description: '大霸群峰之一，是觀賞大霸尖山北側山壁的最佳位置。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'shengling'
   },
   {
     id: 54,
@@ -577,7 +631,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.98,
     range: '中央山脈',
     description: '中央山脈南段（南一段）的最後一座百岳。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'ocean'
   },
   {
     id: 55,
@@ -587,7 +642,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.05,
     range: '中央山脈',
     description: '以危險的「干卓萬斷崖」聞名，是進階登山者的挑戰目標。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'volcano'
   },
   {
     id: 56,
@@ -597,7 +653,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.48,
     range: '中央山脈',
     description: '奇萊東稜最高峰，山形厚實廣大，容易迷路。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'qilai'
   },
   {
     id: 57,
@@ -607,7 +664,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.96,
     range: '中央山脈',
     description: '位於南二段，山形奇特，山頂有兩座並列的尖峰。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-south'
   },
   {
     id: 58,
@@ -617,7 +675,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.17,
     range: '中央山脈',
     description: '馬博橫斷的最後一座山，展望可及花東縱谷。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-mid'
   },
   {
     id: 59,
@@ -627,7 +686,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.08,
     range: '中央山脈',
     description: '位於新康橫斷，山勢平緩，是百岳中較冷門的高山。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'wuling'
   },
   {
     id: 60,
@@ -637,7 +697,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.23,
     range: '中央山脈',
     description: '北二段名山，山坡多為淺草坡，路徑優美。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'flower'
   },
 
   // === 61-80 名：深邃山域與森林秘境 ===
@@ -649,7 +710,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.92,
     range: '中央山脈',
     description: '「坐車比爬山累」的代表，搭接駁車可直達 2800m 處。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-mid'
   },
   {
     id: 62,
@@ -659,7 +721,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.30,
     range: '中央山脈',
     description: '早期東西向電路輸送的關鍵點，山容雄偉，視野寬闊。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'qilai'
   },
   {
     id: 63,
@@ -669,7 +732,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.33,
     range: '中央山脈',
     description: '亦稱火山，位於能高安東軍路線，山頂多為白碎石。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-mid'
   },
   {
     id: 64,
@@ -679,7 +743,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.22,
     range: '雪山山脈',
     description: '大小劍線最遠的一座，因不提供三角點且極度陡峭，被戲稱「推拿山」。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'wuling'
   },
   {
     id: 65,
@@ -689,7 +754,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.30,
     range: '中央山脈',
     description: '中橫四辣之「超辣」，路徑極陡，山壁如屏風般屹立。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-north'
   },
   {
     id: 66,
@@ -699,7 +765,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.96,
     range: '中央山脈',
     description: '南一段名山，山勢險惡，多崩塌地形。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-south'
   },
   {
     id: 67,
@@ -709,7 +776,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.08,
     range: '中央山脈',
     description: '位於丹大山域，是全台最難抵達的「荒野之心」。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'volcano'
   },
   {
     id: 68,
@@ -719,7 +787,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.06,
     range: '中央山脈',
     description: '位於干卓萬山群，山頂有座碧綠清澈的小水池。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'flower'
   },
   {
     id: 69,
@@ -729,7 +798,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.95,
     range: '玉山山脈',
     description: '玉山群峰中最輕鬆的一座，但也有一段著名的亂石坡。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'yushan'
   },
   {
     id: 70,
@@ -740,7 +810,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '「最簡單百岳」，位於合歡山公路旁，走路 20 分鐘即可登頂。',
     tags: ['合歡群峰'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-north'
   },
   {
     id: 71,
@@ -750,7 +821,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.22,
     range: '中央山脈',
     description: '無雙橫斷的考驗，以「無雙三連峰」的高難度地形著稱。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'volcano'
   },
   {
     id: 72,
@@ -761,7 +833,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '南橫三星之一，就在南橫公路旁，岩壁陡峭但路程短。',
     tags: ['南橫三星'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-south'
   },
   {
     id: 73,
@@ -771,7 +844,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.47,
     range: '中央山脈',
     description: '位於南湖群峰最東側，需穿越溪谷與箭竹林，單日往返辛苦。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'ocean'
   },
   {
     id: 74,
@@ -782,7 +856,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '三尖中最矮的一座，山形細長如手指，位於南二段。',
     tags: ['三尖'],
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'volcano'
   },
   {
     id: 75,
@@ -792,7 +867,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.25,
     range: '雪山山脈',
     description: '雪主路線必經，山頂可俯覽武陵農場與群山展望。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'xueshan'
   },
   {
     id: 76,
@@ -802,7 +878,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.27,
     range: '中央山脈',
     description: '亦稱能高北峰，全山覆蓋如地毯般的綠草坡。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'flower'
   },
   {
     id: 77,
@@ -813,7 +890,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '南橫三星之一，位於大關山隧道口，交通最便利的百岳之一。',
     tags: ['南橫三星'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-south'
   },
   {
     id: 78,
@@ -823,7 +901,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.00,
     range: '中央山脈',
     description: '位於南一段，擁有極其寬廣平坦的高山草坡。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'ocean'
   },
   {
     id: 79,
@@ -833,7 +912,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.13,
     range: '雪山山脈',
     description: '位於大雪山稜脈，因林相茂密且無水源，是登山者的耐力挑戰。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'xueshan'
   },
   {
     id: 80,
@@ -843,7 +923,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.27,
     range: '中央山脈',
     description: '位於北二段，山徑平易近人，以高山展望和草原聞名。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-north'
   },
 
   // === 81-100 名：壯闊草原與南方門戶 ===
@@ -855,7 +936,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.28,
     range: '中央山脈',
     description: '位於北二段，山名親民但路徑極辣，常與閂山連走。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'flower'
   },
   {
     id: 82,
@@ -866,7 +948,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '以「七上八下」的假山頭著稱，被譽為合歡群峰中的「鳥山」。',
     tags: ['合歡群峰'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-north'
   },
   {
     id: 83,
@@ -877,7 +960,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '南橫三星之一，是通往關山的重要營地所在。',
     tags: ['南橫三星'],
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-south'
   },
   {
     id: 84,
@@ -887,7 +971,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.12,
     range: '雪山山脈',
     description: '大霸尖山稜脈最南端，山勢平緩，是看大霸夕照的好地方。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'shengling'
   },
   {
     id: 85,
@@ -897,7 +982,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.35,
     range: '中央山脈',
     description: '能高安東軍路線的核心，山頂旁有如寶石般透明的白石池。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'qilai'
   },
   {
     id: 86,
@@ -907,7 +993,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.45,
     range: '中央山脈',
     description: '奇萊東稜名山，山頭覆蓋濃密的箭竹林與倒木。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'qilai'
   },
   {
     id: 87,
@@ -918,7 +1005,8 @@ export const PEAKS: Peak[] = [
     range: '中央山脈',
     description: '五岳之一，南台灣唯一百岳，擁有絕美的雲海與鐵杉林景觀。',
     tags: ['五岳'],
-    coordinateSource: 'peakvisor'
+    coordinateSource: 'peakvisor',
+    badgeStyle: 'central-south'
   },
   {
     id: 88,
@@ -928,7 +1016,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.97,
     range: '中央山脈',
     description: '昔日伐木中心，路徑筆直向上毫無喘息空間，人稱「膝軟大山」。',
-    coordinateSource: 'reference'
+    coordinateSource: 'reference',
+    badgeStyle: 'central-south'
   },
   {
     id: 89,
@@ -938,7 +1027,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.42,
     range: '中央山脈',
     description: '奇萊東稜名山，山體由巨大的白色大理石構成。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'qilai'
   },
   {
     id: 90,
@@ -948,7 +1038,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.37,
     range: '中央山脈',
     description: '擁有最密集的台灣高山湖泊群。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'qilai'
   },
   {
     id: 91,
@@ -958,7 +1049,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.29,
     range: '中央山脈',
     description: '亦稱能高主峰北側山頭，山頂有一座著名的白色聖母像。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'flower'
   },
   {
     id: 92,
@@ -968,7 +1060,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.14,
     range: '中央山脈',
     description: '位於馬博橫斷支線，地理位置極深。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-mid'
   },
   {
     id: 93,
@@ -978,7 +1071,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.06,
     range: '中央山脈',
     description: '位於丹大山域，地處中央山脈最偏遠的地區之一。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'wuling'
   },
   {
     id: 94,
@@ -989,7 +1083,8 @@ export const PEAKS: Peak[] = [
     range: '雪山山脈',
     description: '武陵四秀最末，因四周皆在樹林內無展望，被稱為百岳「四大鳥山」。',
     tags: ['武陵四秀'],
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'wuling'
   },
   {
     id: 95,
@@ -999,7 +1094,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.09,
     range: '中央山脈',
     description: '位於新康橫斷，以漫長的箭竹海與枯燥的路徑著稱。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'wuling'
   },
   {
     id: 96,
@@ -1009,7 +1105,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.97,
     range: '中央山脈',
     description: '位於南二段，山頭平緩不起眼，是百岳中最矮的山頭之一。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'volcano'
   },
   {
     id: 97,
@@ -1019,7 +1116,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.04,
     range: '中央山脈',
     description: '早期標高超過三千，後測量不滿三千，但保留百岳地位。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'wuling'
   },
   {
     id: 98,
@@ -1029,7 +1127,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.42,
     range: '中央山脈',
     description: '南湖山群之一，地形破碎多岩石。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'ocean'
   },
   {
     id: 99,
@@ -1039,7 +1138,8 @@ export const PEAKS: Peak[] = [
     longitude: 120.95,
     range: '玉山山脈',
     description: '玉山後四峰之一，是 100 座百岳中高度最低的，路程極度辛苦。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'central-south'
   },
   {
     id: 100,
@@ -1049,7 +1149,8 @@ export const PEAKS: Peak[] = [
     longitude: 121.4431,
     range: '中央山脈',
     description: '南湖群峰之一，需穿越複雜地形。',
-    coordinateSource: 'estimated'
+    coordinateSource: 'estimated',
+    badgeStyle: 'volcano'
   }
 ];
 

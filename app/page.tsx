@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ProgressStats from '@/components/ProgressStats';
@@ -134,7 +134,8 @@ export default function Home() {
   };
 
   // 刷新已完成列表（用於手動標記和刪除記錄後）
-  const handleUpdate = async () => {
+  // 使用 useCallback 避免每次渲染都創建新的函數引用
+  const handleUpdate = useCallback(async () => {
     try {
       const ids = await getCompletedPeakIds();
       setCompletedPeakIds(ids);
@@ -142,7 +143,7 @@ export default function Home() {
     } catch (error) {
       console.error('重新載入完成記錄失敗:', error);
     }
-  };
+  }, []); // 空依賴陣列，因為 setCompletedPeakIds 和 setNewlyCompletedIds 是穩定的
 
   // 匯出海報處理函數
   const handleExportPoster = () => {

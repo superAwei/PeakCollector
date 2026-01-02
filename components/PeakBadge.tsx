@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import Image from 'next/image';
 import { Peak } from '@/lib/peaks-data';
 import { CompletedPeak, saveCompletedPeaks, getPeakRecord, deletePeakRecord } from '@/lib/storage';
@@ -15,7 +15,7 @@ interface PeakBadgeProps {
   onUpdate?: () => void; // 通知父組件更新
 }
 
-export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdate }: PeakBadgeProps) {
+function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdate }: PeakBadgeProps) {
   const [showManualConfirm, setShowManualConfirm] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -41,33 +41,53 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
   // 手動標記
   const handleManualMark = async () => {
     try {
+      // 先儲存記錄
       await saveCompletedPeaks([peak.id], undefined, 'manual');
 
-      // 追蹤手動標記事件
-      trackManualMarkPeak(peak.id, peak.name);
-
+      // 儲存成功後再關閉對話框和更新UI
       setShowManualConfirm(false);
-      onUpdate?.(); // 等資料儲存完成後再更新
+
+      // 追蹤手動標記事件（不阻塞UI更新）
+      try {
+        trackManualMarkPeak(peak.id, peak.name);
+      } catch (trackError) {
+        console.warn('追蹤事件失敗（不影響功能）:', trackError);
+      }
+
+      // 最後才更新UI
+      onUpdate?.();
     } catch (error) {
       console.error('手動標記失敗:', error);
-      alert('標記失敗，請稍後再試');
+      // 保持對話框開啟，讓使用者知道失敗了
+      const errorMessage = error instanceof Error ? error.message : '未知錯誤';
+      alert(`標記失敗：${errorMessage}\n\n請稍後再試或聯絡客服。`);
     }
   };
 
   // 刪除記錄
   const handleDelete = async () => {
     try {
+      // 先刪除記錄
       await deletePeakRecord(peak.id);
 
-      // 追蹤取消標記事件
-      trackUnmarkPeak(peak.id, peak.name);
-
+      // 刪除成功後再關閉對話框
       setShowDeleteConfirm(false);
       setShowDetails(false);
-      onUpdate?.(); // 等資料刪除完成後再更新
+
+      // 追蹤取消標記事件（不阻塞UI更新）
+      try {
+        trackUnmarkPeak(peak.id, peak.name);
+      } catch (trackError) {
+        console.warn('追蹤事件失敗（不影響功能）:', trackError);
+      }
+
+      // 最後才更新UI
+      onUpdate?.();
     } catch (error) {
       console.error('刪除記錄失敗:', error);
-      alert('刪除失敗，請稍後再試');
+      // 保持對話框開啟，讓使用者知道失敗了
+      const errorMessage = error instanceof Error ? error.message : '未知錯誤';
+      alert(`刪除失敗：${errorMessage}\n\n請稍後再試或聯絡客服。`);
     }
   };
 
@@ -113,7 +133,7 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
           {/* 主徽章圖標（圓形） */}
           <div className={`
             relative w-24 h-24 sm:w-28 sm:h-28
-            ${!isCompleted ? 'grayscale' : ''}
+            ${!isCompleted ? 'grayscale opacity-30' : ''}
             transition-all duration-300
           `}>
             <Image
@@ -397,3 +417,6 @@ export default function PeakBadge({ peak, isCompleted, isNewlyCompleted, onUpdat
     </>
   );
 }
+
+// 使用 memo 優化效能，避免不必要的重新渲染
+export default memo(PeakBadge);

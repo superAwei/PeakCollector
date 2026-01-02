@@ -90,38 +90,33 @@ export async function saveCompletedPeaks(
       throw new Error('使用者未登入，無法儲存記錄');
     }
 
-    // 取得已完成的記錄
-    const existingRecords = await getCompletedPeaks();
-    const existingIds = new Set(existingRecords.map(r => r.peakId));
     const now = new Date().toISOString();
 
-    // 只添加尚未記錄的百岳（需要加入 user_id 以符合 RLS policy）
-    const newRecords: CompletedPeakInsert[] = peakIds
-      .filter(id => !existingIds.has(id))
-      .map(id => ({
-        user_id: user.id, // 加入 user_id
-        peakId: id,
-        completedAt: now,
-        gpxFileName,
-        verificationMethod,
-      }));
+    // 準備要插入的記錄（直接使用 upsert，不需要事先查詢）
+    const records: CompletedPeakInsert[] = peakIds.map(id => ({
+      user_id: user.id,
+      peakId: id,
+      completedAt: now,
+      gpxFileName,
+      verificationMethod,
+    }));
 
-    if (newRecords.length === 0) {
-      console.log('沒有新的記錄需要儲存');
-      return;
-    }
-
-    // 插入到 Supabase（user_id 會由 RLS policy 自動填入）
+    // 使用 upsert 自動處理重複記錄（資料庫層級處理，無需預先查詢）
     const { error } = await supabase
       .from(TABLE_NAME)
-      .insert(newRecords);
+      .upsert(records, {
+        onConflict: 'user_id,peakId',  // 指定衝突的欄位
+        ignoreDuplicates: true          // 忽略重複記錄，不會報錯
+      });
 
     if (error) {
       console.error('Supabase 插入失敗:', error);
-      throw new Error(`儲存失敗: ${error.message}`);
+      // 改進錯誤訊息處理
+      const errorMsg = error.message || error.hint || error.details || JSON.stringify(error);
+      throw new Error(`儲存失敗: ${errorMsg}`);
     }
 
-    console.log(`✅ 成功儲存 ${newRecords.length} 筆記錄`);
+    console.log(`✅ 成功儲存/更新 ${records.length} 筆記錄`);
   } catch (error) {
     console.error('儲存已完成百岳記錄失敗:', error);
     throw error;
