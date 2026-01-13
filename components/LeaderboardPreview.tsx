@@ -5,22 +5,39 @@
  * - 前 3 名使用者（金銀銅牌）
  * - 我的排名
  * - 「查看完整排行榜」按鈕
+ *
+ * 效能優化：
+ * - 延遲載入（1.5 秒後才開始載入排行榜）
+ * - 使用 React.memo 避免不必要的重新渲染
  */
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { getLeaderboard } from '@/lib/leaderboard';
 import type { LeaderboardEntry } from '@/lib/types/database';
 
-export default function LeaderboardPreview() {
+function LeaderboardPreview() {
   const router = useRouter();
   const [topThree, setTopThree] = useState<LeaderboardEntry[]>([]);
   const [myRank, setMyRank] = useState<LeaderboardEntry | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  // 延遲 1.5 秒後才開始載入排行榜
+  // 確保關鍵 UI（使用者選單等）先就緒
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShouldLoad(true);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
+    if (!shouldLoad) return;
+
     async function loadLeaderboard() {
       try {
         const data = await getLeaderboard();
@@ -34,7 +51,7 @@ export default function LeaderboardPreview() {
     }
 
     loadLeaderboard();
-  }, []);
+  }, [shouldLoad]);
 
   // 取得排名圖示
   const getRankIcon = (rank: number) => {
@@ -184,3 +201,6 @@ export default function LeaderboardPreview() {
     </div>
   );
 }
+
+// 使用 React.memo 包裝組件，避免不必要的重新渲染
+export default memo(LeaderboardPreview);
