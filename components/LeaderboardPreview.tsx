@@ -89,27 +89,27 @@ function LeaderboardPreview() {
     }
   };
 
-  // Loading 狀態（或尚未滾動到可見區域）
-  if (isLoading || !isVisible) {
-    return (
-      <div ref={containerRef} className="bg-white rounded-lg shadow-lg p-4 sm:p-6 animate-pulse">
-        <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
-        <div className="space-y-3">
-          <div className="h-16 bg-gray-100 rounded"></div>
-          <div className="h-16 bg-gray-100 rounded"></div>
-          <div className="h-16 bg-gray-100 rounded"></div>
-        </div>
-      </div>
-    );
-  }
-
-  // 如果沒有資料，不顯示
-  if (topThree.length === 0) {
-    return null;
-  }
-
+  // 統一使用包裝 div，避免 hydration 錯誤
   return (
-    <div ref={containerRef} className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+    <div ref={containerRef}>
+      {/* Loading 狀態（或尚未滾動到可見區域） */}
+      {(isLoading || !isVisible) && (
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 animate-pulse">
+          <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+          <div className="space-y-3">
+            <div className="h-16 bg-gray-100 rounded"></div>
+            <div className="h-16 bg-gray-100 rounded"></div>
+            <div className="h-16 bg-gray-100 rounded"></div>
+          </div>
+        </div>
+      )}
+
+      {/* 如果沒有資料，不顯示 */}
+      {topThree.length === 0 && !isLoading && isVisible && null}
+
+      {/* 正常顯示狀態 */}
+      {!isLoading && isVisible && topThree.length > 0 && (
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
       {/* 標題 */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -211,15 +211,17 @@ function LeaderboardPreview() {
         </div>
       )}
 
-      {/* 查看完整排行榜按鈕 */}
-      <div className="mt-4">
-        <button
-          onClick={() => router.push('/leaderboard')}
-          className="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg transition-colors font-medium text-sm sm:text-base shadow-sm"
-        >
-          查看完整排行榜 →
-        </button>
-      </div>
+          {/* 查看完整排行榜按鈕 */}
+          <div className="mt-4">
+            <button
+              onClick={() => router.push('/leaderboard')}
+              className="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg transition-colors font-medium text-sm sm:text-base shadow-sm"
+            >
+              查看完整排行榜 →
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
