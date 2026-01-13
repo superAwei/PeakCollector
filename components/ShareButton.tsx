@@ -1,10 +1,11 @@
 /**
  * ShareButton - 匯出成就海報按鈕
  *
- * v2.0：支援使用者上傳登山照片，生成個人化成就海報
+ * v4.0：極簡設計 - 照片全滿版 + 左下角白色浮水印
  * - 1080x1080px 正方形海報（適合 Instagram）
- * - 左側 70%：使用者照片或預設漸層背景
- * - 右側 30%：成就資訊（進度、用戶名、簡介）
+ * - 照片：佔滿整個畫面
+ * - 左下角浮水印：水平排列，白色主題，無背景
+ * - LOGO (80×80) + 進度資訊 + 使用者名稱
  */
 
 'use client';
@@ -125,7 +126,7 @@ export default function ShareButton({
       setIsGenerating(true);
 
       // 追蹤事件
-      trackGenerateShareImage(profile.username, 'achievement_poster_v2');
+      trackGenerateShareImage(profile.username, 'achievement_poster_v4');
 
       // 創建 Canvas
       const canvas = document.createElement('canvas');
@@ -137,9 +138,9 @@ export default function ShareButton({
         throw new Error('無法創建 Canvas 上下文');
       }
 
-      // === 左側 70%：使用者照片或預設漸層背景 ===
-      const leftWidth = 1080 * 0.7; // 756px
-
+      // ========================================
+      // 步驟 1：繪製全滿版照片或預設背景
+      // ========================================
       if (uploadedImage) {
         // 載入使用者上傳的照片
         const img = new Image();
@@ -149,9 +150,9 @@ export default function ShareButton({
           img.src = uploadedImage;
         });
 
-        // 使用 cover 模式繪製圖片（裁切置中）
+        // 使用 cover 模式繪製圖片（裁切置中，佔滿整個 canvas）
         const imgAspect = img.width / img.height;
-        const canvasAspect = leftWidth / 1080;
+        const canvasAspect = 1080 / 1080; // 1:1
 
         let drawWidth, drawHeight, offsetX, offsetY;
 
@@ -159,11 +160,11 @@ export default function ShareButton({
           // 圖片較寬，以高度為準
           drawHeight = 1080;
           drawWidth = drawHeight * imgAspect;
-          offsetX = -(drawWidth - leftWidth) / 2;
+          offsetX = -(drawWidth - 1080) / 2;
           offsetY = 0;
         } else {
           // 圖片較高，以寬度為準
-          drawWidth = leftWidth;
+          drawWidth = 1080;
           drawHeight = drawWidth / imgAspect;
           offsetX = 0;
           offsetY = -(drawHeight - 1080) / 2;
@@ -171,87 +172,144 @@ export default function ShareButton({
 
         ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
       } else {
-        // 預設漸層背景
-        const gradient = ctx.createLinearGradient(0, 0, leftWidth, 1080);
+        // 預設漸層背景（全滿版）
+        const gradient = ctx.createLinearGradient(0, 0, 1080, 1080);
         gradient.addColorStop(0, '#10b981'); // emerald-500
-        gradient.addColorStop(1, '#14b8a6'); // teal-500
+        gradient.addColorStop(0.5, '#14b8a6'); // teal-500
+        gradient.addColorStop(1, '#0891b2'); // cyan-600
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, leftWidth, 1080);
+        ctx.fillRect(0, 0, 1080, 1080);
       }
 
-      // === 右側 30%：成就資訊 ===
-      const rightX = leftWidth;
-      const rightWidth = 1080 - leftWidth; // 324px
+      // ========================================
+      // 步驟 2：繪製左下角白色浮水印（無背景區塊）
+      // ========================================
 
-      // 背景色（淺灰色）
-      ctx.fillStyle = '#f9fafb'; // gray-50
-      ctx.fillRect(rightX, 0, rightWidth, 1080);
+      // 2-1. 載入並繪製白色 LOGO（100×100）
+      const logo = new Image();
+      await new Promise((resolve, reject) => {
+        logo.onload = resolve;
+        logo.onerror = reject;
+        logo.src = '/weblogo-white.png'; // 使用白色版本
+      });
 
-      // 設定文字繪製起點（右側區域內的 padding）
-      const textX = rightX + 40;
-      let currentY = 80;
+      const logoSize = 150; // 增大到 150×150
+      const logoX = 40; // 距離左邊 40px
 
-      // 1. PeakCollector 品牌名稱
-      ctx.fillStyle = '#059669'; // emerald-600
-      ctx.font = 'bold 32px system-ui, -apple-system, sans-serif';
-      ctx.fillText('Peak', textX, currentY);
-      currentY += 36;
-      ctx.fillText('Collector', textX, currentY);
-      currentY += 80;
+      // 計算整體浮水印高度，確保不超出畫面
+      // 資訊區高度約：48 + 24 + 10 + 24 + 26 + 12 + 20 = 164px
+      const infoHeight = 164;
+      const totalHeight = Math.max(logoSize, infoHeight); // 取較大值
+      const logoY = 1080 - totalHeight - 40; // 確保整體在畫面內
 
-      // 2. 進度數字（大號）
-      ctx.fillStyle = '#059669'; // emerald-600
-      ctx.font = 'bold 72px system-ui, -apple-system, sans-serif';
-      ctx.fillText(`${completedCount}`, textX, currentY);
-      currentY += 80;
+      // 設定文字陰影（增加可讀性）
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 2;
 
-      // "/ 100 座" 文字
-      ctx.fillStyle = '#9ca3af'; // gray-400
-      ctx.font = '500 28px system-ui, -apple-system, sans-serif';
-      ctx.fillText(`/ ${totalCount} 座`, textX, currentY);
-      currentY += 60;
+      // 繪製白色 LOGO（加強陰影增加可讀性）
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+      ctx.shadowBlur = 16;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 4;
+      ctx.drawImage(logo, logoX, logoY, logoSize, logoSize);
+      ctx.restore();
 
-      // 3. 進度條
-      const barWidth = rightWidth * 0.8; // 80% 寬度
-      const barHeight = 12;
-      const barX = textX;
-      const barY = currentY;
+      // 重置陰影為文字陰影
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 2;
 
-      // 背景條（灰色）
-      ctx.fillStyle = '#e5e7eb'; // gray-200
-      ctx.roundRect(barX, barY, barWidth, barHeight, 6);
+      // 2-2. 資訊區起始位置（LOGO 右側）
+      const infoX = logoX + logoSize + 28; // LOGO 右側 + 28px 間距（增大）
+      let infoY = logoY; // 與 LOGO 頂部對齊
+
+      // 2-3. 進度數字（98 / 100 座）- 超大號醒目
+      // 已完成數字（最大最醒目）
+      ctx.fillStyle = 'white'; // 100% 白色
+      ctx.font = 'bold 48px system-ui, -apple-system, sans-serif'; // 36 → 48px (+33%)
+      const completedText = `${completedCount}`;
+      ctx.fillText(completedText, infoX, infoY + 48);
+
+      // 計算已完成數字的寬度
+      const completedWidth = ctx.measureText(completedText).width;
+
+      // 斜線和總數（次要資訊）
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'; // 70% 透明度白色
+      ctx.font = '400 36px system-ui, -apple-system, sans-serif'; // 28 → 36px (+29%)
+      const slashText = ` / ${totalCount}`;
+      ctx.fillText(slashText, infoX + completedWidth, infoY + 48);
+
+      // 計算斜線和總數的寬度
+      const slashWidth = ctx.measureText(slashText).width;
+
+      // 「座」字（最次要）
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'; // 60% 透明度白色
+      ctx.font = '400 32px system-ui, -apple-system, sans-serif'; // 24 → 32px (+33%)
+      ctx.fillText(' 座', infoX + completedWidth + slashWidth, infoY + 48);
+
+      infoY += 72; // 進度數字下方留 24px 間距（48 + 24 = 72）
+
+      // 2-4. 進度條（再次加大，綠色漸層）
+      const barWidth = 160; // 140 → 160px
+      const barHeight = 10; // 8 → 10px
+      const barX = infoX;
+      const barY = infoY;
+
+      // 背景條（半透明白色）
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.roundRect(barX, barY, barWidth, barHeight, 5);
       ctx.fill();
 
-      // 進度條（emerald 漸層）
+      // 進度條（綠色漸層：深綠 → 中綠 → 亮綠）
       const progressWidth = (barWidth * progress) / 100;
       const progressGradient = ctx.createLinearGradient(barX, barY, barX + progressWidth, barY);
-      progressGradient.addColorStop(0, '#10b981'); // emerald-500
-      progressGradient.addColorStop(1, '#14b8a6'); // teal-500
+      progressGradient.addColorStop(0, '#047857');    // 深綠色 emerald-700
+      progressGradient.addColorStop(0.5, '#059669');  // 中綠色 emerald-600
+      progressGradient.addColorStop(1, '#10b981');    // 亮綠色 emerald-500
+
       ctx.fillStyle = progressGradient;
       ctx.beginPath();
-      ctx.roundRect(barX, barY, progressWidth, barHeight, 6);
+      ctx.roundRect(barX, barY, progressWidth, barHeight, 5);
       ctx.fill();
 
-      currentY += 60;
+      infoY += barHeight + 24; // 進度條下方留 24px 間距
 
-      // 4. @username
-      ctx.fillStyle = '#374151'; // gray-700
-      ctx.font = '500 24px system-ui, -apple-system, sans-serif';
-      ctx.fillText(`@${profile.username}`, textX, currentY);
-      currentY += 60;
+      // 2-5. @username（再次放大）
+      ctx.fillStyle = 'white';
+      ctx.font = '500 26px system-ui, -apple-system, sans-serif'; // 20 → 26px (+30%)
+      ctx.fillText(`@${profile.username}`, infoX, infoY);
 
-      // 5. Bio（個人簡介，最多 3 行）
+      infoY += 38; // 使用者名稱下方留 12px 間距（26px 字體高度 + 12px 間距）
+
+      // 2-6. Bio（個人簡介，再次放大，最多 1 行）
       if (profile.bio) {
-        const bioText = profile.bio.slice(0, 100); // 限制 100 字元
-        ctx.fillStyle = '#4b5563'; // gray-600
-        ctx.font = '400 18px system-ui, -apple-system, sans-serif';
+        const bioText = profile.bio.slice(0, 40); // 限制 40 字元
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.font = '400 20px system-ui, -apple-system, sans-serif'; // 16 → 20px (+25%)
 
-        const bioLines = wrapText(ctx, bioText, rightWidth - 80, 28, 3);
-        bioLines.forEach((line) => {
-          ctx.fillText(line, textX, currentY);
-          currentY += 28;
-        });
+        // 單行簡介，超過寬度自動截斷
+        const maxBioWidth = 260; // 220 → 260
+        let displayBio = bioText;
+        while (ctx.measureText(displayBio + '...').width > maxBioWidth && displayBio.length > 0) {
+          displayBio = displayBio.slice(0, -1);
+        }
+        if (displayBio.length < bioText.length) {
+          displayBio += '...';
+        }
+
+        ctx.fillText(displayBio, infoX, infoY);
       }
+
+      // 重置陰影
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
 
       // 生成 Blob（改用 toBlob 而非 toDataURL，更有效率且支援 Web Share API）
       canvas.toBlob(
@@ -378,7 +436,7 @@ export default function ShareButton({
         <div className="space-y-4">
           {/* 說明文字 */}
           <p className="text-sm text-gray-600">
-            上傳你的登山照片，或使用預設背景生成專屬成就海報
+            上傳你的登山照片，生成全滿版成就海報（照片+左下角白色浮水印）
           </p>
 
           {/* 照片上傳區域 */}
@@ -433,7 +491,7 @@ export default function ShareButton({
           {/* 預設背景說明 */}
           {!uploadedImage && !generatedBlob && (
             <p className="text-xs text-gray-500 text-center">
-              💡 未上傳照片時，將使用 PeakCollector 預設漸層背景
+              💡 未上傳照片時，將使用 PeakCollector 預設漸層背景（全滿版）
             </p>
           )}
 
