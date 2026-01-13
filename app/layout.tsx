@@ -32,6 +32,7 @@ export default function RootLayout({
     <html lang="zh-TW">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         {/* 嵌入式瀏覽器提示（最高層級，z-index: 300） */}
         <OpenInBrowserPrompt />
