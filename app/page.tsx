@@ -18,6 +18,7 @@ import type { Profile } from '@/lib/types';
 // 導入新的首頁組件
 import ProgressCard from '@/components/HomePage/ProgressCard';
 import CollapsibleTutorial from '@/components/HomePage/CollapsibleTutorial';
+import LeaderboardPreview from '@/components/LeaderboardPreview';
 
 export default function Home() {
   const router = useRouter();
@@ -300,6 +301,11 @@ export default function Home() {
 
           {/* 使用說明（可摺疊） */}
           <CollapsibleTutorial />
+        </div>
+
+        {/* 排行榜預覽 */}
+        <div className="mb-6 sm:mb-8">
+          <LeaderboardPreview />
         </div>
 
         {/* GPX 上傳區域 */}
