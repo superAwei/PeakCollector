@@ -6,14 +6,15 @@
  * - 我的排名
  * - 「查看完整排行榜」按鈕
  *
- * 效能優化：
- * - 延遲載入（1.5 秒後才開始載入排行榜）
- * - 使用 React.memo 避免不必要的重新渲染
+ * 效能優化 v2（激進優化）：
+ * - Intersection Observer：只在滾動到可見區域時才載入
+ * - 完全避免首頁載入時執行任何排行榜查詢
+ * - 確保使用者選單等 UI 互動完全不受影響
  */
 
 'use client';
 
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { getLeaderboard } from '@/lib/leaderboard';
 import type { LeaderboardEntry } from '@/lib/types/database';
@@ -23,26 +24,47 @@ function LeaderboardPreview() {
   const [topThree, setTopThree] = useState<LeaderboardEntry[]>([]);
   const [myRank, setMyRank] = useState<LeaderboardEntry | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // 延遲 1.5 秒後才開始載入排行榜
-  // 確保關鍵 UI（使用者選單等）先就緒
+  // 使用 Intersection Observer 監測元件是否可見
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShouldLoad(true);
-    }, 1500);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasLoaded) {
+            setIsVisible(true);
+          }
+        });
+      },
+      {
+        rootMargin: '100px', // 提前 100px 開始載入
+        threshold: 0.1,
+      }
+    );
 
-    return () => clearTimeout(timer);
-  }, []);
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
 
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, [hasLoaded]);
+
+  // 只有當元件可見時才載入排行榜資料
   useEffect(() => {
-    if (!shouldLoad) return;
+    if (!isVisible || hasLoaded) return;
 
     async function loadLeaderboard() {
       try {
         const data = await getLeaderboard();
         setTopThree(data.topRankers.slice(0, 3));
         setMyRank(data.currentUser || null);
+        setHasLoaded(true);
       } catch (error) {
         console.error('載入排行榜失敗:', error);
       } finally {
@@ -51,7 +73,7 @@ function LeaderboardPreview() {
     }
 
     loadLeaderboard();
-  }, [shouldLoad]);
+  }, [isVisible, hasLoaded]);
 
   // 取得排名圖示
   const getRankIcon = (rank: number) => {
@@ -67,10 +89,10 @@ function LeaderboardPreview() {
     }
   };
 
-  // Loading 狀態
-  if (isLoading) {
+  // Loading 狀態（或尚未滾動到可見區域）
+  if (isLoading || !isVisible) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 animate-pulse">
+      <div ref={containerRef} className="bg-white rounded-lg shadow-lg p-4 sm:p-6 animate-pulse">
         <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
         <div className="space-y-3">
           <div className="h-16 bg-gray-100 rounded"></div>
@@ -87,7 +109,7 @@ function LeaderboardPreview() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+    <div ref={containerRef} className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
       {/* 標題 */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-2">
