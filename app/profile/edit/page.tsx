@@ -37,6 +37,7 @@ function ProfileEditContent() {
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
   const [isPublic, setIsPublic] = useState(true);
+  const [showInLeaderboard, setShowInLeaderboard] = useState(false);
 
   // 檢查是否為首次設定
   useEffect(() => {
@@ -62,6 +63,7 @@ function ProfileEditContent() {
           setDisplayName(profileData.display_name || '');
           setBio(profileData.bio || '');
           setIsPublic(profileData.is_public ?? true);
+          setShowInLeaderboard(profileData.show_in_leaderboard ?? false);
         }
         setIsLoading(false);
       }
@@ -111,6 +113,7 @@ function ProfileEditContent() {
         display_name: displayName.trim() || undefined,
         bio: bio.trim() || undefined,
         is_public: isPublic,
+        show_in_leaderboard: showInLeaderboard,
       });
 
       // 追蹤個人資料編輯事件
@@ -289,18 +292,47 @@ function ProfileEditContent() {
               </p>
             </div>
 
-            {/* 公開設定 */}
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="is_public"
-                checked={isPublic}
-                onChange={(e) => setIsPublic(e.target.checked)}
-                className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
-              />
-              <label htmlFor="is_public" className="text-sm text-gray-700">
-                公開我的主頁（其他人可以查看我的百岳收集進度）
-              </label>
+            {/* 隱私設定區塊 */}
+            <div className="space-y-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-900">隱私設定</h3>
+
+              {/* 公開設定 */}
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="is_public"
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
+                />
+                <div className="flex-1">
+                  <label htmlFor="is_public" className="text-sm text-gray-900 font-medium cursor-pointer">
+                    公開我的主頁
+                  </label>
+                  <p className="text-xs text-gray-600 mt-0.5">
+                    其他人可以透過你的專屬網址查看你的百岳收集進度
+                  </p>
+                </div>
+              </div>
+
+              {/* 排行榜設定 */}
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="show_in_leaderboard"
+                  checked={showInLeaderboard}
+                  onChange={(e) => setShowInLeaderboard(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
+                />
+                <div className="flex-1">
+                  <label htmlFor="show_in_leaderboard" className="text-sm text-gray-900 font-medium cursor-pointer">
+                    在排行榜顯示我的真實名稱 🏆
+                  </label>
+                  <p className="text-xs text-gray-600 mt-0.5">
+                    開啟後，你的名稱會顯示在排行榜上。未開啟時將以「山友 #ID」匿名顯示
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* 錯誤訊息 */}

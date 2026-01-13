@@ -161,6 +161,18 @@ export default function UserMenu() {
                 <span className="text-base">⚙️</span>
                 <span>編輯個人資料</span>
               </button>
+
+              {/* 百岳排行榜 */}
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push('/leaderboard');
+                }}
+                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors flex items-center gap-2 min-h-[44px]"
+              >
+                <span className="text-base">🏆</span>
+                <span>百岳排行榜</span>
+              </button>
             </div>
 
             {/* 分隔線 */}

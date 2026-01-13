@@ -37,6 +37,7 @@ export interface Profile {
   avatar_url?: string; // 頭像 URL
   bio?: string; // 個人簡介
   is_public: boolean; // 是否公開個人主頁（預設 true）
+  show_in_leaderboard: boolean; // 是否顯示在排行榜（預設 false，保護隱私）
   created_at: string;
   updated_at: string;
 }
@@ -141,6 +142,33 @@ export interface DatabaseError {
 export interface ApiResponse<T> {
   data?: T;
   error?: DatabaseError;
+}
+
+// ==================== 排行榜相關型別 ====================
+
+/**
+ * 排行榜項目
+ *
+ * 包含使用者資訊和完成數統計
+ */
+export interface LeaderboardEntry {
+  user_id: string; // 使用者 ID
+  username: string; // 使用者名稱（可能是「山友 #ID」或真實名稱）
+  display_name?: string; // 顯示名稱
+  avatar_url?: string; // 頭像 URL
+  completed_count: number; // 完成的百岳數量
+  completion_rate: number; // 完成率（0-100）
+  rank: number; // 排名（1, 2, 3...）
+  show_in_leaderboard: boolean; // 是否公開顯示真實名稱
+}
+
+/**
+ * 排行榜查詢結果
+ */
+export interface LeaderboardResult {
+  topRankers: LeaderboardEntry[]; // 前 20 名
+  currentUser?: LeaderboardEntry; // 當前使用者排名
+  totalUsers: number; // 總參與人數
 }
 
 // ==================== localStorage 遷移相關型別 ====================
