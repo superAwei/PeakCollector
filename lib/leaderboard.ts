@@ -21,15 +21,10 @@ export async function getLeaderboard(): Promise<LeaderboardResult> {
 
     // 查詢所有使用者的完成數
     // 使用 Supabase 的聚合查詢
+    // 注意：show_in_leaderboard 是可選欄位，如果資料庫中沒有這個欄位會回傳 undefined
     const { data: allUsers, error } = await supabase
       .from('profiles')
-      .select(`
-        id,
-        username,
-        display_name,
-        avatar_url,
-        show_in_leaderboard
-      `);
+      .select('id, username, display_name, avatar_url, show_in_leaderboard');
 
     if (error) {
       console.error('查詢 profiles 失敗:', error);
@@ -72,8 +67,10 @@ export async function getLeaderboard(): Promise<LeaderboardResult> {
         const completion_rate = Math.round((completed_count / DEMO_PEAKS_COUNT) * 100);
 
         // 決定顯示名稱（隱私保護）
+        // 如果資料庫中沒有 show_in_leaderboard 欄位，預設為 false（隱私優先）
+        const showInLeaderboard = profile.show_in_leaderboard ?? false;
         let displayUsername = profile.username;
-        if (!profile.show_in_leaderboard) {
+        if (!showInLeaderboard) {
           // 隱私模式：顯示「山友 #ID前8碼」
           displayUsername = `山友 #${profile.id.slice(0, 8)}`;
         }
@@ -81,12 +78,12 @@ export async function getLeaderboard(): Promise<LeaderboardResult> {
         return {
           user_id: profile.id,
           username: displayUsername,
-          display_name: profile.show_in_leaderboard ? profile.display_name : undefined,
-          avatar_url: profile.show_in_leaderboard ? profile.avatar_url : undefined,
+          display_name: showInLeaderboard ? profile.display_name : undefined,
+          avatar_url: showInLeaderboard ? profile.avatar_url : undefined,
           completed_count,
           completion_rate,
           rank: 0, // 稍後計算排名
-          show_in_leaderboard: profile.show_in_leaderboard,
+          show_in_leaderboard: showInLeaderboard,
         };
       })
       .filter((entry) => entry.completed_count > 0) // 只顯示有完成記錄的使用者
