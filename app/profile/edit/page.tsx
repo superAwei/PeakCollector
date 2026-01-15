@@ -13,6 +13,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import { mutate } from 'swr';
 import { useAuth } from '@/components/AuthProvider';
 import { getCurrentUserProfile, updateProfile, isUsernameAvailable } from '@/lib/profile';
 import type { Profile } from '@/lib/types';
@@ -115,6 +116,9 @@ function ProfileEditContent() {
         is_public: isPublic,
         show_in_leaderboard: showInLeaderboard,
       });
+
+      // 清除排行榜快取（重要！確保隱私設定即時生效）
+      mutate('/api/leaderboard');
 
       // 追蹤個人資料編輯事件
       trackEditProfile(isFirstTime);
