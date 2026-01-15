@@ -1,19 +1,37 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import useSWR from 'swr';
 import { useAuth } from '@/components/AuthProvider';
-import { getLeaderboard } from '@/lib/leaderboard';
-import type { LeaderboardResult, LeaderboardEntry } from '@/lib/types/database';
+import type { LeaderboardResult } from '@/lib/types/database';
 import { DEMO_PEAKS_COUNT } from '@/lib/peaks-data';
+
+// SWR fetcher 函數
+const fetcher = (url: string) => fetch(url).then((res) => {
+  if (!res.ok) throw new Error('載入排行榜失敗');
+  return res.json();
+});
 
 export default function LeaderboardPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
-  const [leaderboardData, setLeaderboardData] = useState<LeaderboardResult | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  // 使用 SWR 進行資料快取和自動重新驗證
+  const { data: leaderboardData, error, isLoading } = useSWR<LeaderboardResult>(
+    user ? '/api/leaderboard' : null, // 只有登入後才載入
+    fetcher,
+    {
+      revalidateOnFocus: false, // 切換視窗不重新載入
+      revalidateOnReconnect: true, // 重新連線時更新
+      dedupingInterval: 60000, // 60 秒內不重複請求
+      refreshInterval: 300000, // 5 分鐘自動更新
+      onError: (err) => {
+        console.error('SWR 載入排行榜失敗:', err);
+      },
+    }
+  );
 
   // 檢查登入狀態
   useEffect(() => {
@@ -21,27 +39,6 @@ export default function LeaderboardPage() {
       router.push('/login');
     }
   }, [user, loading, router]);
-
-  // 載入排行榜資料
-  useEffect(() => {
-    async function loadLeaderboard() {
-      if (!user) return;
-
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await getLeaderboard();
-        setLeaderboardData(data);
-      } catch (err) {
-        console.error('載入排行榜失敗:', err);
-        setError('載入排行榜失敗，請稍後再試');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadLeaderboard();
-  }, [user]);
 
   // 取得排名圖示和樣式
   const getRankBadge = (rank: number) => {
@@ -57,53 +54,115 @@ export default function LeaderboardPage() {
     }
   };
 
-  // Loading 狀態
-  if (loading || isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <Image
-              src="/weblogo.png"
-              alt="PeakCollector Logo"
-              width={96}
-              height={96}
-              className="w-20 h-20 sm:w-24 sm:h-24 animate-pulse"
-              priority
-            />
-          </div>
-          <div className="text-xl text-gray-600">載入排行榜中...</div>
-        </div>
-      </div>
-    );
-  }
-
-  // 未登入時不渲染
-  if (!user) {
+  // 未登入時不渲染（只在驗證載入完成後才判斷）
+  if (!loading && !user) {
     return null;
   }
 
-  // 錯誤狀態
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-          <div className="text-center">
-            <div className="text-red-500 text-5xl mb-4">⚠️</div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">載入失敗</h2>
-            <p className="text-gray-600 mb-4">{error}</p>
-            <button
-              onClick={() => router.push('/')}
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
-            >
-              返回首頁
-            </button>
+  // LoadingSkeleton 組件 - 專業的載入骨架
+  const LoadingSkeleton = () => (
+    <div className="space-y-6">
+      {/* 我的排名骨架 */}
+      <div className="bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg shadow-lg p-4 sm:p-6 animate-pulse">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="space-y-2">
+            <div className="h-6 bg-gray-400 rounded w-24"></div>
+            <div className="h-4 bg-gray-400 rounded w-32"></div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="text-center">
+              <div className="h-12 bg-gray-400 rounded w-16 mb-2"></div>
+              <div className="h-3 bg-gray-400 rounded w-12"></div>
+            </div>
+            <div className="h-12 w-px bg-gray-400"></div>
+            <div className="text-center">
+              <div className="h-10 bg-gray-400 rounded w-14 mb-2"></div>
+              <div className="h-3 bg-gray-400 rounded w-12"></div>
+            </div>
+            <div className="h-12 w-px bg-gray-400"></div>
+            <div className="text-center">
+              <div className="h-10 bg-gray-400 rounded w-14 mb-2"></div>
+              <div className="h-3 bg-gray-400 rounded w-12"></div>
+            </div>
           </div>
         </div>
       </div>
-    );
-  }
 
+      {/* 說明骨架 */}
+      <div className="bg-blue-50 border-l-4 border-blue-200 p-3 sm:p-4 rounded animate-pulse">
+        <div className="h-4 bg-blue-200 rounded w-3/4"></div>
+      </div>
+
+      {/* 排行榜骨架 */}
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        {/* 表頭 */}
+        <div className="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+          <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center">
+            <div className="col-span-2 h-4 bg-gray-200 rounded animate-pulse"></div>
+            <div className="col-span-5 sm:col-span-6 h-4 bg-gray-200 rounded animate-pulse"></div>
+            <div className="col-span-2 sm:col-span-2 h-4 bg-gray-200 rounded animate-pulse"></div>
+            <div className="col-span-3 sm:col-span-2 h-4 bg-gray-200 rounded animate-pulse hidden sm:block"></div>
+          </div>
+        </div>
+
+        {/* 前 3 名骨架 - 特別樣式 */}
+        <div className="divide-y divide-gray-200">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="px-4 sm:px-6 py-4 sm:py-5 animate-pulse">
+              <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center">
+                <div className="col-span-2 flex flex-col items-center gap-2">
+                  <div className="w-10 h-10 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full"></div>
+                  <div className="h-3 bg-gray-200 rounded w-12"></div>
+                </div>
+                <div className="col-span-5 sm:col-span-6 flex items-center gap-2 sm:gap-3">
+                  <div className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+                <div className="col-span-2 sm:col-span-2 space-y-1">
+                  <div className="h-5 bg-gray-200 rounded w-12 mx-auto"></div>
+                  <div className="h-3 bg-gray-200 rounded w-16 mx-auto"></div>
+                </div>
+                <div className="col-span-3 sm:col-span-2 space-y-2 hidden sm:block">
+                  <div className="h-5 bg-gray-200 rounded w-12 mx-auto"></div>
+                  <div className="h-2 bg-gray-200 rounded w-full"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* 其他排名骨架 */}
+          {[...Array(10)].map((_, i) => (
+            <div key={`other-${i}`} className="px-4 sm:px-6 py-3 sm:py-4 animate-pulse">
+              <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center">
+                <div className="col-span-2">
+                  <div className="h-6 bg-gray-200 rounded w-10 mx-auto"></div>
+                </div>
+                <div className="col-span-5 sm:col-span-6 flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-300 rounded-full flex-shrink-0"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                  </div>
+                </div>
+                <div className="col-span-2 sm:col-span-2">
+                  <div className="h-5 bg-gray-200 rounded w-10 mx-auto"></div>
+                </div>
+                <div className="col-span-3 sm:col-span-2 space-y-2 hidden sm:block">
+                  <div className="h-5 bg-gray-200 rounded w-12 mx-auto"></div>
+                  <div className="h-2 bg-gray-200 rounded w-full"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  // 直接渲染頁面，不再阻塞
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50">
       {/* Header */}
@@ -146,8 +205,14 @@ export default function LeaderboardPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
-        {/* 我的排名區塊 */}
-        {leaderboardData?.currentUser && (
+        {/* 載入狀態 - 顯示骨架 UI */}
+        {isLoading && <LoadingSkeleton />}
+
+        {/* 排行榜內容 - 只在載入完成且無錯誤時顯示 */}
+        {!isLoading && !error && (
+          <>
+            {/* 我的排名區塊 */}
+            {leaderboardData?.currentUser && (
           <div className="mb-6 sm:mb-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg shadow-lg p-4 sm:p-6 text-white">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-center sm:text-left">
@@ -293,20 +358,41 @@ export default function LeaderboardPage() {
           )}
         </div>
 
-        {/* Footer */}
-        <div className="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-500 px-3">
-          <p>排行榜每次載入時更新</p>
-          <p className="mt-1">
-            想要在排行榜顯示真實名稱？前往
-            <button
-              onClick={() => router.push('/profile/edit')}
-              className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors mx-1"
-            >
-              個人設定
-            </button>
-            開啟選項
-          </p>
-        </div>
+            {/* Footer */}
+            <div className="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-500 px-3">
+              <p>排行榜每次載入時更新</p>
+              <p className="mt-1">
+                想要在排行榜顯示真實名稱？前往
+                <button
+                  onClick={() => router.push('/profile/edit')}
+                  className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors mx-1"
+                >
+                  個人設定
+                </button>
+                開啟選項
+              </p>
+            </div>
+          </>
+        )}
+
+        {/* 錯誤訊息顯示 */}
+        {!isLoading && error && (
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
+            <div className="text-center">
+              <div className="text-red-500 text-5xl mb-4">⚠️</div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">載入失敗</h2>
+              <p className="text-gray-600 mb-4">
+                {error?.message || '載入排行榜失敗，請稍後再試'}
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+              >
+                重新載入
+              </button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
